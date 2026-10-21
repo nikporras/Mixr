@@ -15,6 +15,7 @@ namespace Mixr
         public event Action SettingsHotkeyTyped;
         public event Action AbsoluteVolumeUpHotkeyTyped;
         public event Action AbsoluteVolumeDownHotkeyTyped;
+        public event Action CycleDeviceHotkeyTyped;
 
         private ISettingsBag _settings = StorageFactory.GetSettings();
 
@@ -25,6 +26,7 @@ namespace Mixr
             HotkeyManager.Current.Register(SettingsHotkey);
             HotkeyManager.Current.Register(AbsoluteVolumeUpHotkey);
             HotkeyManager.Current.Register(AbsoluteVolumeDownHotkey);
+            HotkeyManager.Current.Register(CycleDeviceHotkey);
 
             HotkeyManager.Current.KeyPressed += (hotkey) =>
             {
@@ -52,6 +54,11 @@ namespace Mixr
                 {
                     Trace.WriteLine("AppSettings AbsoluteVolumeDownHotkeyTyped");
                     AbsoluteVolumeDownHotkeyTyped?.Invoke();
+                }
+                else if (hotkey.Equals(CycleDeviceHotkey))
+                {
+                    Trace.WriteLine("AppSettings CycleDeviceHotkeyTyped");
+                    CycleDeviceHotkeyTyped?.Invoke();
                 }
             };
         }
@@ -111,6 +118,18 @@ namespace Mixr
             }
         }
 
+        // Mixr: makes the next device in the cycle the default output.
+        public HotkeyData CycleDeviceHotkey
+        {
+            get => _settings.Get("CycleDeviceHotkey", new HotkeyData { });
+            set
+            {
+                HotkeyManager.Current.Unregister(CycleDeviceHotkey);
+                _settings.Set("CycleDeviceHotkey", value);
+                HotkeyManager.Current.Register(CycleDeviceHotkey);
+            }
+        }
+
         public bool UseLegacyIcon
         {
             get
@@ -137,6 +156,7 @@ namespace Mixr
         public event Action DevicePreferencesChanged;
 
         private string[] _hiddenDeviceIds;
+        private string[] _cycleDeviceIds;
         private DeviceNameEntry[] _deviceNames;
 
         private string[] HiddenDeviceIds
@@ -161,6 +181,31 @@ namespace Mixr
             {
                 _hiddenDeviceIds = value;
                 _settings.Set("HiddenDeviceIds", value);
+            }
+        }
+
+        private string[] CycleDeviceIds
+        {
+            get
+            {
+                if (_cycleDeviceIds == null)
+                {
+                    try
+                    {
+                        _cycleDeviceIds = _settings.Get("CycleDeviceIds", new string[] { }) ?? new string[] { };
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"AppSettings CycleDeviceIds read failed: {ex}");
+                        _cycleDeviceIds = new string[] { };
+                    }
+                }
+                return _cycleDeviceIds;
+            }
+            set
+            {
+                _cycleDeviceIds = value;
+                _settings.Set("CycleDeviceIds", value);
             }
         }
 
@@ -208,6 +253,26 @@ namespace Mixr
             }
             HiddenDeviceIds = ids.ToArray();
             DevicePreferencesChanged?.Invoke();
+        }
+
+        public bool IsDeviceInCycle(string deviceId)
+        {
+            return !string.IsNullOrEmpty(deviceId) && CycleDeviceIds.Contains(deviceId);
+        }
+
+        public void SetDeviceInCycle(string deviceId, bool isInCycle)
+        {
+            if (string.IsNullOrEmpty(deviceId) || IsDeviceInCycle(deviceId) == isInCycle)
+            {
+                return;
+            }
+
+            var ids = CycleDeviceIds.Where(id => id != deviceId).ToList();
+            if (isInCycle)
+            {
+                ids.Add(deviceId);
+            }
+            CycleDeviceIds = ids.ToArray();
         }
 
         public string GetDeviceCustomName(string deviceId)

@@ -38,6 +38,8 @@ namespace Mixr
         private ShellNotifyIcon _trayIcon;
         private WindowHolder _mixerWindow;
         private WindowHolder _settingsWindow;
+        private DefaultDeviceCycler _deviceCycler;
+        private DeviceSwitchPopup _deviceSwitchPopup;
         private ErrorReporter _errorReporter;
 
         public static AppSettings Settings { get; private set; }
@@ -71,6 +73,8 @@ namespace Mixr
             }
             else
             {
+                // Mixr: another Mixr (packaged or not) is already running and keeps the tray icon.
+                Trace.WriteLine("App OnAppStartup Another instance is running, exiting");
                 Shutdown();
             }
         }
@@ -109,6 +113,7 @@ namespace Mixr
             Settings.SettingsHotkeyTyped += () => _settingsWindow.OpenOrBringToFront();
             Settings.AbsoluteVolumeUpHotkeyTyped += AbsoluteVolumeIncrement;
             Settings.AbsoluteVolumeDownHotkeyTyped += AbsoluteVolumeDecrement;
+            Settings.CycleDeviceHotkeyTyped += CycleDefaultDevice;
             Settings.RegisterHotkeys();
 
             _trayIcon.PrimaryInvoke += (_, type) => _flyoutViewModel.OpenFlyout(type);
@@ -277,6 +282,35 @@ namespace Mixr
         }
 
         private Window CreateMixerExperience() => new FullWindow { DataContext = new FullWindowViewModel(CollectionViewModel) };
+
+        // Mixr: make the next device ticked "Include in cycle" the default output.
+        private void CycleDefaultDevice()
+        {
+            try
+            {
+                if (_deviceCycler == null)
+                {
+                    _deviceCycler = new DefaultDeviceCycler(CollectionViewModel, Settings);
+                }
+
+                var next = _deviceCycler.Next();
+                if (next == null)
+                {
+                    return;
+                }
+
+                if (_deviceSwitchPopup == null)
+                {
+                    _deviceSwitchPopup = new DeviceSwitchPopup();
+                }
+                _deviceSwitchPopup.ShowDeviceName(next.DisplayName);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"App CycleDefaultDevice Failed: {ex}");
+                ErrorReporter.LogWarning(ex);
+            }
+        }
 
         private void AbsoluteVolumeIncrement()
         {

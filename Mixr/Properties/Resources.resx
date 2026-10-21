@@ -680,4 +680,10 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="HideDeviceText" xml:space="preserve">
     <value>Hide from Mixr</value>
   </data>
+  <data name="DeviceIncludeInCycleText" xml:space="preserve">
+    <value>Include in cycle (the cycle shortcut switches between ticked devices)</value>
+  </data>
+  <data name="SettingsCycleDeviceText" xml:space="preserve">
+    <value>Switch to the next device in the cycle</value>
+  </data>
 </root>

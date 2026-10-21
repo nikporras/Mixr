@@ -12,6 +12,8 @@ Windows tray app for volume and audio device control. Fork of EarTrumpet (MIT), 
 - To run: open `Mixr.sln` in Visual Studio 2022, startup project `Mixr.Package`, press F5 (Deploy must be ticked in Configuration Manager). The user does UI testing; tell them exactly what to click to test.
 - Targets Windows SDK 10.0.26100.0 (set in `Mixr/Mixr.csproj` and `Mixr.Package/Mixr.Package.wapproj`).
 - Each build bumps the version in `Mixr.Package/Package.appxmanifest`. Don't commit that change unless asked; `git restore` it.
+- Settings: the packaged app uses package LocalSettings (`%LOCALAPPDATA%\Packages\nikporras.Mixr_1sdd7yawvg6ne`), but running `Build\Debug\Mixr.exe` directly uses `HKCU\Software\Mixr`, so settings look lost. Only one Mixr runs at a time; a stray unpackaged instance makes a packaged launch exit and also locks `Build\Debug\Mixr.exe` for the build.
+- `PublisherDisplayName` must be the same in `Mixr.Package/Package.appxmanifest` and `Mixr.Package/Package.StoreAssociation.xml` (currently `nikporras`), or the package build fails with APPX1603.
 
 ## Layout
 
@@ -41,10 +43,10 @@ Windows tray app for volume and audio device control. Fork of EarTrumpet (MIT), 
 
 - Rename to Mixr, modern SDK, own package identity (`nikporras.Mixr`)
 - Hide and rename playback devices: `AppSettings` (`IsDeviceHidden`, `SetDeviceHidden`, `GetDeviceCustomName`, `SetDeviceCustomName`, `DevicePreferencesChanged`), Settings > Devices page (`MixrDevicesSettingsPageViewModel`), right-click Hide/Show button on devices (`FocusedDeviceViewModel`). Hidden devices are left out of the flyout, tray menu and app "move to device" menu; the current default always shows.
+- Cycle hotkey: "Include in cycle" tick box per device on the Devices page (`AppSettings.IsDeviceInCycle`/`SetDeviceInCycle`, stored as `CycleDeviceIds`), shortcut on the Shortcuts page (`CycleDeviceHotkey`, no default). `UI/Helpers/DefaultDeviceCycler` keeps its own cycle position (reset when the default changes some other way) and applies the switch on a background task, coalescing rapid presses to the latest target; `UI/Views/DeviceSwitchPopup` shows its name for 1.5 s, bottom centre, without taking focus.
 
 ## Roadmap (in order)
 
-1. **Cycle hotkey**: "Include in cycle" tick box per device on the Devices page; configurable shortcut on the Shortcuts page (no default); each press makes the next ticked device the default output; small popup shows the new device name for a second or two.
-2. **Auto switch on connect**: when a chosen device appears (headphones, Quest Link), make it default; switch back when it disconnects.
-3. **Profiles**: one click sets default output, default mic and per-app routing together (can build on the Actions addon).
-4. Later: mic mute hotkey with indicator, command line / `mixr://` actions for Stream Deck, Equalizer APO preset switcher, hardware sliders.
+1. **Auto switch on connect**: when a chosen device appears (headphones, Quest Link), make it default; switch back when it disconnects.
+2. **Profiles**: one click sets default output, default mic and per-app routing together (can build on the Actions addon).
+3. Later: mic mute hotkey with indicator, command line / `mixr://` actions for Stream Deck, Equalizer APO preset switcher, hardware sliders.

@@ -21,6 +21,9 @@ namespace Mixr.UI.ViewModels
         public HotkeyViewModel AbsoluteVolumeDownHotkey { get; }
         public string DefaultAbsoluteVolumeDownHotkey => s_hotkeyNoneText;
 
+        public HotkeyViewModel CycleDeviceHotkey { get; }
+        public string DefaultCycleDeviceHotkey => s_hotkeyNoneText;
+
         public MixrShortcutsPageViewModel(AppSettings settings) : base(null)
         {
             Title = Properties.Resources.ShortcutsPageText;
@@ -31,6 +34,7 @@ namespace Mixr.UI.ViewModels
             OpenSettingsHotkey = new HotkeyViewModel(settings.SettingsHotkey, (newHotkey) => settings.SettingsHotkey = newHotkey);
             AbsoluteVolumeUpHotkey = new HotkeyViewModel(settings.AbsoluteVolumeUpHotkey, (newHotkey) => settings.AbsoluteVolumeUpHotkey = newHotkey);
             AbsoluteVolumeDownHotkey = new HotkeyViewModel(settings.AbsoluteVolumeDownHotkey, (newHotkey) => settings.AbsoluteVolumeDownHotkey = newHotkey);
+            CycleDeviceHotkey = new HotkeyViewModel(settings.CycleDeviceHotkey, (newHotkey) => settings.CycleDeviceHotkey = newHotkey);
         }
     }
 }

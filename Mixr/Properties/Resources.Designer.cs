@@ -898,6 +898,24 @@ namespace Mixr.Properties {
                 return ResourceManager.GetString("HideDeviceText", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Include in cycle (the cycle shortcut switches between ticked devices).
+        /// </summary>
+        public static string DeviceIncludeInCycleText {
+            get {
+                return ResourceManager.GetString("DeviceIncludeInCycleText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Switch to the next device in the cycle.
+        /// </summary>
+        public static string SettingsCycleDeviceText {
+            get {
+                return ResourceManager.GetString("SettingsCycleDeviceText", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Mouse settings.

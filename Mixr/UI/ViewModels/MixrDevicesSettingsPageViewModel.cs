@@ -34,6 +34,16 @@ namespace Mixr.UI.ViewModels
             }
         }
 
+        public bool IsInCycle
+        {
+            get => _settings.IsDeviceInCycle(Id);
+            set
+            {
+                _settings.SetDeviceInCycle(Id, value);
+                RaisePropertyChanged(nameof(IsInCycle));
+            }
+        }
+
         public string CustomName
         {
             get => _settings.GetDeviceCustomName(Id) ?? "";

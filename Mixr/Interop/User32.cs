@@ -119,6 +119,8 @@ namespace Mixr.Interop
         }
 
         public const int WS_EX_TOOLWINDOW = 0x00000080;
+        public const int WS_EX_TRANSPARENT = 0x00000020;
+        public const int WS_EX_NOACTIVATE = 0x08000000;
         public const int WS_MAXIMIZEBOX = 0x10000;
 
         [StructLayout(LayoutKind.Sequential)]
