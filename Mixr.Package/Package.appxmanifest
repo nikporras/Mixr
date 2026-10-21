@@ -25,11 +25,6 @@
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
-      <Extensions>
-        <desktop:Extension Category="windows.startupTask" Executable="Mixr\Mixr.exe" EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask TaskId="Mixr" Enabled="true" DisplayName="Mixr" />
-        </desktop:Extension>
-      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

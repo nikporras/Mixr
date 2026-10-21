@@ -14,7 +14,50 @@ namespace Mixr.Interop.Helpers
             return ret;
         }
 
+        // Mixr: the dev build uses red instead of the Windows accent colour, so it's easy to tell from the stable copy.
+        public static bool UseDevAccent { get; set; }
+        public static readonly Color DevAccent = Color.FromRgb(0xE8, 0x11, 0x23);
+
+        private static readonly Dictionary<string, Color> s_devAccentShades = new Dictionary<string, Color>
+        {
+            { "ImmersiveSystemAccent", DevAccent },
+            { "ImmersiveSystemAccentLight1", Color.FromRgb(0xEF, 0x4A, 0x56) },
+            { "ImmersiveSystemAccentLight2", Color.FromRgb(0xF4, 0x7F, 0x88) },
+            { "ImmersiveSystemAccentLight3", Color.FromRgb(0xF9, 0xB4, 0xB9) },
+            { "ImmersiveSystemAccentDark1", Color.FromRgb(0xC5, 0x0F, 0x1F) },
+            { "ImmersiveSystemAccentDark2", Color.FromRgb(0xA4, 0x0E, 0x1A) },
+            { "ImmersiveSystemAccentDark3", Color.FromRgb(0x75, 0x0B, 0x1C) },
+        };
+
         public static bool TryLookup(string name, out Color color)
+        {
+            if (!TryLookupSystem(name, out color))
+            {
+                return false;
+            }
+
+            // Mixr: swap any colour that is one of the accent shades, so colours Windows derives from the accent turn red too.
+            if (UseDevAccent)
+            {
+                if (s_devAccentShades.TryGetValue(name, out var devColor))
+                {
+                    color = devColor;
+                    return true;
+                }
+
+                foreach (var shade in s_devAccentShades)
+                {
+                    if (TryLookupSystem(shade.Key, out var accentColor) && accentColor.R == color.R && accentColor.G == color.G && accentColor.B == color.B)
+                    {
+                        color = Color.FromArgb(color.A, shade.Value.R, shade.Value.G, shade.Value.B);
+                        break;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private static bool TryLookupSystem(string name, out Color color)
         {
             color = default(Color);
 

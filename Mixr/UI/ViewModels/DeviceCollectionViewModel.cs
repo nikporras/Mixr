@@ -252,7 +252,7 @@ namespace Mixr.UI.ViewModels
             if (Default != null)
             {
                 var stateText = Default.IsMuted ? Properties.Resources.MutedText : $"{Default.Volume}%";
-                var prefixText = $"Mixr: {stateText} - ";
+                var prefixText = $"{App.AppDisplayName}: {stateText} - ";
                 var deviceName = $"{Default.DeviceDescription} ({Default.EnumeratorName})";
 
                 // Remote Audio devices may not contain an enumerator name or description.
@@ -285,7 +285,8 @@ namespace Mixr.UI.ViewModels
             }
             else
             {
-                return Properties.Resources.NoDeviceTrayText;
+                // Mixr: "Mixr Dev" in the dev build.
+                return Properties.Resources.NoDeviceTrayText.Replace("Mixr", App.AppDisplayName);
             }
         }
     }

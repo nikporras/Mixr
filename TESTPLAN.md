@@ -13,6 +13,7 @@ Manual tests to run before a release. Tick each box as it passes. Add tests here
 | Mic mute hotkey | Not tested yet |
 | Daily use version | Not tested yet |
 | Command line and mixr:// actions | Not tested yet |
+| Dev build look | Not tested yet |
 
 ## Setup (before every test run)
 
@@ -142,6 +143,18 @@ Setup: run `.\publish-stable.ps1` once (it registers `mixr://` links). Have two 
 - [ ] AutoHotkey: `^!F10::Run 'C:\Apps\Mixr\Mixr.exe volume up'` (v2) raises the volume with no flashing window
 - [ ] Press a command key about 10 times very fast: no stutter, the final state matches the last popup
 - [ ] Hotkeys, auto switch and the tray menu still work as before
+
+## 8. Dev build look
+
+Setup: Windows accent colour set to something that isn't red (e.g. the default blue). Have the stable copy installed (section 6).
+
+- [ ] F5: the tray icon has a red dot in the bottom right corner; hover it: the tooltip starts with "Mixr Dev:"
+- [ ] Open the flyout: slider fills and highlights are red, not blue. With Settings > Personalization > Colors > "Show accent colour on Start and taskbar" on, the flyout background is dark red
+- [ ] Settings window: the title says "Settings - Mixr Dev", and the selected page and tick boxes are red
+- [ ] Right click an app > move to device, and the full mixer window: selected items are red
+- [ ] Switch Windows between light and dark mode: still red in both, and the dot stays
+- [ ] Exit, start `C:\Apps\Mixr\Mixr.exe`: no dot, tooltip starts with "Mixr:", the title is "Settings", and the Windows accent colour is used
+- [ ] Sign out and in: only the stable copy starts (the dev one is no longer under Settings > Apps > Startup)
 
 ## If something fails
 

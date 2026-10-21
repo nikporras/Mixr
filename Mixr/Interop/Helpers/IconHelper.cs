@@ -48,6 +48,20 @@ namespace Mixr.Interop.Helpers
             }
         }
 
+        // Mixr: draws a dot in the bottom right corner, to mark the dev build's tray icon.
+        public static Icon AddDot(Icon originalIcon, System.Windows.Media.Color dotColor)
+        {
+            using (var bitmap = originalIcon.ToBitmap())
+            using (var graphics = Graphics.FromImage(bitmap))
+            using (var brush = new SolidBrush(Color.FromArgb(dotColor.A, dotColor.R, dotColor.G, dotColor.B)))
+            {
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                var size = bitmap.Width * 0.45f;
+                graphics.FillEllipse(brush, bitmap.Width - size, bitmap.Height - size, size, size);
+                return Icon.FromHandle(bitmap.GetHicon()).AsDisposableIcon();
+            }
+        }
+
         public static Icon ColorIcon(Icon originalIcon, double fillPercent, System.Windows.Media.Color newColor)
         {
             using (var bitmap = originalIcon.ToBitmap())

@@ -29,6 +29,11 @@ namespace Mixr
         public static Version PackageVersion { get; private set; }
         public static TimeSpan Duration => s_appTimer.Elapsed;
 
+        // Mixr: the packaged copy is the F5 dev build (the stable copy runs unpackaged from C:\Apps\Mixr).
+        // It is red and called "Mixr Dev" so the two are easy to tell apart.
+        public static bool IsDevBuild => HasIdentity;
+        public static string AppDisplayName => IsDevBuild ? "Mixr Dev" : "Mixr";
+
         public FlyoutWindow FlyoutWindow { get; private set; }
         public DeviceCollectionViewModel CollectionViewModel { get; private set; }
 
@@ -59,6 +64,7 @@ namespace Mixr
             HasDevIdentity = PackageHelper.HasDevIdentity();
             PackageVersion = PackageHelper.GetVersion(HasIdentity);
             PackageName = PackageHelper.GetFamilyName(HasIdentity);
+            ImmersiveSystemColors.UseDevAccent = IsDevBuild;
 
             Settings = new AppSettings();
             _errorReporter = new ErrorReporter(Settings);
@@ -326,7 +332,9 @@ namespace Mixr
                 allCategories.AddRange(AddonManager.Host.SettingsItems.Select(a => CreateAddonSettingsPage(a)));
             }
 
-            var viewModel = new SettingsViewModel(Mixr.Properties.Resources.SettingsWindowText, allCategories);
+            // Mixr: the dev build's title says so.
+            var title = IsDevBuild ? $"{Mixr.Properties.Resources.SettingsWindowText} - {AppDisplayName}" : Mixr.Properties.Resources.SettingsWindowText;
+            var viewModel = new SettingsViewModel(title, allCategories);
             return new SettingsWindow { DataContext = viewModel };
         }
 

@@ -58,7 +58,7 @@ namespace Mixr.UI.Helpers
                 _hash = nextHash;
                 using (var old = Current)
                 {
-                    Current = SelectAndLoadIcon(_kind);
+                    Current = MarkDevBuild(SelectAndLoadIcon(_kind));
                     Changed?.Invoke(this);
                 }
             }
@@ -110,6 +110,20 @@ namespace Mixr.UI.Helpers
             {
                 Trace.WriteLine($"TaskbarIconSource LoadIcon: {ex}");
                 return SelectAndLoadIcon(IconKind.Mixr);
+            }
+        }
+
+        // Mixr: a red dot on the tray icon marks the dev build.
+        private static Icon MarkDevBuild(Icon icon)
+        {
+            if (!App.IsDevBuild || icon == null)
+            {
+                return icon;
+            }
+
+            using (icon)
+            {
+                return IconHelper.AddDot(icon, ImmersiveSystemColors.DevAccent);
             }
         }
 
