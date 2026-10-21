@@ -1924,5 +1924,50 @@ namespace Mixr.Properties {
                 return ResourceManager.GetString("ProfileAppliedFormatText", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mute or unmute the default microphone.
+        /// </summary>
+        public static string SettingsMicMuteText {
+            get {
+                return ResourceManager.GetString("SettingsMicMuteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show an indicator in the top right corner while the microphone is muted.
+        /// </summary>
+        public static string SettingsShowMicMuteIndicatorText {
+            get {
+                return ResourceManager.GetString("SettingsShowMicMuteIndicatorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone muted.
+        /// </summary>
+        public static string MicMutedText {
+            get {
+                return ResourceManager.GetString("MicMutedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone on.
+        /// </summary>
+        public static string MicUnmutedText {
+            get {
+                return ResourceManager.GetString("MicUnmutedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No microphone.
+        /// </summary>
+        public static string NoMicrophoneText {
+            get {
+                return ResourceManager.GetString("NoMicrophoneText", resourceCulture);
+            }
+        }
     }
 }

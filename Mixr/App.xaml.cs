@@ -42,6 +42,7 @@ namespace Mixr
         private DefaultDeviceCycler _deviceCycler;
         private AutoSwitchOnConnect _autoSwitchOnConnect;
         private ProfileManager _profileManager;
+        private MicMuteController _micMuteController;
         private DeviceSwitchPopup _deviceSwitchPopup;
         private ErrorReporter _errorReporter;
 
@@ -125,12 +126,15 @@ namespace Mixr
                 new DefaultDeviceSwitcher());
             _profileManager.Applied += profile => ShowSwitchPopup(Mixr.Properties.Resources.ProfileAppliedFormatText.Replace("{Name}", profile.Name));
 
+            _micMuteController = new MicMuteController(WindowsAudioFactory.Create(AudioDeviceKind.Recording), Settings);
+
             Settings.FlyoutHotkeyTyped += () => _flyoutViewModel.OpenFlyout(InputType.Keyboard);
             Settings.MixerHotkeyTyped += () => _mixerWindow.OpenOrClose();
             Settings.SettingsHotkeyTyped += () => _settingsWindow.OpenOrBringToFront();
             Settings.AbsoluteVolumeUpHotkeyTyped += AbsoluteVolumeIncrement;
             Settings.AbsoluteVolumeDownHotkeyTyped += AbsoluteVolumeDecrement;
             Settings.CycleDeviceHotkeyTyped += CycleDefaultDevice;
+            Settings.MicMuteHotkeyTyped += ToggleMicMute;
             Settings.RegisterHotkeys();
 
             _trayIcon.PrimaryInvoke += (_, type) => _flyoutViewModel.OpenFlyout(type);
@@ -335,9 +339,37 @@ namespace Mixr
             }
         }
 
+        // Mixr: mute or unmute the default microphone and say which it is now.
+        private void ToggleMicMute()
+        {
+            try
+            {
+                var isMuted = _micMuteController.ToggleMute();
+                if (isMuted == null)
+                {
+                    ShowSwitchPopup(Mixr.Properties.Resources.NoMicrophoneText, DeviceSwitchPopup.MicrophoneOffGlyph);
+                }
+                else if (isMuted.Value)
+                {
+                    ShowSwitchPopup(Mixr.Properties.Resources.MicMutedText, DeviceSwitchPopup.MicrophoneOffGlyph);
+                }
+                else
+                {
+                    ShowSwitchPopup(Mixr.Properties.Resources.MicUnmutedText, DeviceSwitchPopup.MicrophoneGlyph);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"App ToggleMicMute Failed: {ex}");
+                ErrorReporter.LogWarning(ex);
+            }
+        }
+
         private void ShowDeviceSwitchPopup(DeviceViewModel device) => ShowSwitchPopup(device.DisplayName);
 
-        private void ShowSwitchPopup(string text)
+        private void ShowSwitchPopup(string text) => ShowSwitchPopup(text, DeviceSwitchPopup.SpeakerGlyph);
+
+        private void ShowSwitchPopup(string text, string glyph)
         {
             try
             {
@@ -345,7 +377,7 @@ namespace Mixr
                 {
                     _deviceSwitchPopup = new DeviceSwitchPopup();
                 }
-                _deviceSwitchPopup.ShowDeviceName(text);
+                _deviceSwitchPopup.ShowText(text, glyph);
             }
             catch (Exception ex)
             {

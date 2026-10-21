@@ -16,6 +16,8 @@ namespace Mixr
         public event Action AbsoluteVolumeUpHotkeyTyped;
         public event Action AbsoluteVolumeDownHotkeyTyped;
         public event Action CycleDeviceHotkeyTyped;
+        public event Action MicMuteHotkeyTyped;
+        public event Action ShowMicMuteIndicatorChanged;
 
         private ISettingsBag _settings = StorageFactory.GetSettings();
 
@@ -27,6 +29,7 @@ namespace Mixr
             HotkeyManager.Current.Register(AbsoluteVolumeUpHotkey);
             HotkeyManager.Current.Register(AbsoluteVolumeDownHotkey);
             HotkeyManager.Current.Register(CycleDeviceHotkey);
+            HotkeyManager.Current.Register(MicMuteHotkey);
 
             HotkeyManager.Current.KeyPressed += (hotkey) =>
             {
@@ -59,6 +62,11 @@ namespace Mixr
                 {
                     Trace.WriteLine("AppSettings CycleDeviceHotkeyTyped");
                     CycleDeviceHotkeyTyped?.Invoke();
+                }
+                else if (hotkey.Equals(MicMuteHotkey))
+                {
+                    Trace.WriteLine("AppSettings MicMuteHotkeyTyped");
+                    MicMuteHotkeyTyped?.Invoke();
                 }
             };
         }
@@ -127,6 +135,28 @@ namespace Mixr
                 HotkeyManager.Current.Unregister(CycleDeviceHotkey);
                 _settings.Set("CycleDeviceHotkey", value);
                 HotkeyManager.Current.Register(CycleDeviceHotkey);
+            }
+        }
+
+        // Mixr: mutes or unmutes the default microphone.
+        public HotkeyData MicMuteHotkey
+        {
+            get => _settings.Get("MicMuteHotkey", new HotkeyData { });
+            set
+            {
+                HotkeyManager.Current.Unregister(MicMuteHotkey);
+                _settings.Set("MicMuteHotkey", value);
+                HotkeyManager.Current.Register(MicMuteHotkey);
+            }
+        }
+
+        public bool ShowMicMuteIndicator
+        {
+            get => _settings.Get("ShowMicMuteIndicator", true);
+            set
+            {
+                _settings.Set("ShowMicMuteIndicator", value);
+                ShowMicMuteIndicatorChanged?.Invoke();
             }
         }
 

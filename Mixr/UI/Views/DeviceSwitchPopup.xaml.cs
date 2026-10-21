@@ -1,14 +1,17 @@
-﻿using Mixr.Interop;
+﻿using Mixr.Extensions;
 using System;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace Mixr.UI.Views
 {
-    // Mixr: briefly shows the new default device's name after the cycle hotkey is pressed.
+    // Mixr: briefly shows what just changed (new default device, applied profile, mic mute) at the bottom of the screen.
     public partial class DeviceSwitchPopup : Window
     {
+        public const string SpeakerGlyph = "\xE7F5";
+        public const string MicrophoneGlyph = "\xE720";
+        public const string MicrophoneOffGlyph = "\xEC54";
+
         private static readonly TimeSpan s_displayTime = TimeSpan.FromSeconds(1.5);
         private const double BottomMargin = 48;
 
@@ -25,19 +28,14 @@ namespace Mixr.UI.Views
                 Hide();
             };
 
-            // Never take focus or mouse input away from whatever the user is doing.
-            SourceInitialized += (_, __) =>
-            {
-                var hwnd = new WindowInteropHelper(this).Handle;
-                var exStyle = User32.GetWindowLong(hwnd, User32.GWL.GWL_EXSTYLE);
-                User32.SetWindowLong(hwnd, User32.GWL.GWL_EXSTYLE, exStyle | User32.WS_EX_NOACTIVATE | User32.WS_EX_TOOLWINDOW | User32.WS_EX_TRANSPARENT);
-            };
+            SourceInitialized += (_, __) => this.MakeClickThroughOverlay();
             SizeChanged += (_, __) => Reposition();
         }
 
-        public void ShowDeviceName(string name)
+        public void ShowText(string text, string glyph = SpeakerGlyph)
         {
-            DeviceNameText.Text = name ?? "";
+            GlyphText.Text = glyph;
+            DeviceNameText.Text = text ?? "";
             if (!IsVisible)
             {
                 Show();

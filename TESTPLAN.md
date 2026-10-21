@@ -10,6 +10,7 @@ Manual tests to run before a release. Tick each box as it passes. Add tests here
 | Cycle hotkey | Passed 2026-10-21 (core tests), extra checks pending |
 | Auto switch on connect | Not tested yet |
 | Profiles | Not tested yet |
+| Mic mute hotkey | Not tested yet |
 
 ## Setup (before every test run)
 
@@ -85,6 +86,22 @@ Setup: open two apps that play sound (e.g. Spotify and a browser video) so they 
 - [ ] Exit and restart Mixr: profiles, names and lines are kept
 - [ ] Cycle hotkey and auto switch still work as before
 
+## 5. Mic mute hotkey
+
+Setup: Settings > Shortcuts, set **Mute or unmute the default microphone** to an unused combo (e.g. Ctrl+Alt+F11). **Show an indicator…** is ticked by default.
+
+- [ ] Click into Notepad, press the shortcut: popup says "Microphone muted", a "Microphone muted" badge appears in the top right corner, Notepad keeps focus
+- [ ] Windows Sound settings shows the default mic as muted; a voice app (Discord) stops picking you up
+- [ ] Press again: popup says "Microphone on", the badge disappears, the mic works again
+- [ ] The badge doesn't block clicks: click a button underneath it
+- [ ] Mute the mic from Windows Sound settings instead: the badge appears; unmute there: it goes
+- [ ] Mute, then change the default mic to an unmuted one (Windows settings or a profile): the badge goes; change back to the muted one: it comes back
+- [ ] Untick **Show an indicator…** while muted: the badge goes at once; tick it again: it comes back. The popup still shows either way
+- [ ] Disable or unplug every microphone, press the shortcut: popup says "No microphone", nothing breaks
+- [ ] Badge stays on top of normal windows and in a borderless fullscreen game
+- [ ] Exit and restart Mixr while muted: the badge shows again on startup; the shortcut and the indicator setting are kept
+- [ ] Cycle hotkey popup still shows the speaker icon
+
 ## If something fails
 
-Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager` or `StorageFactory Using`.
+Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager`, `MicMuteController` or `StorageFactory Using`.

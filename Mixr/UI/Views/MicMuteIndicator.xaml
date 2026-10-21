@@ -1,0 +1,41 @@
+﻿<Window x:Class="Mixr.UI.Views.MicMuteIndicator"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Theme="clr-namespace:Mixr.UI.Themes"
+        xmlns:b="clr-namespace:Mixr.UI.Behaviors"
+        xmlns:resx="clr-namespace:Mixr.Properties"
+        Title="Mixr"
+        Theme:Brush.Foreground="Text"
+        Theme:Options.Source="System"
+        b:FrameworkElementEx.FlowDirection="Auto"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Focusable="False"
+        IsHitTestVisible="False"
+        ResizeMode="NoResize"
+        ShowActivated="False"
+        ShowInTaskbar="False"
+        SizeToContent="WidthAndHeight"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        Topmost="True"
+        UseLayoutRounding="True"
+        WindowStyle="None">
+    <Border Padding="10,6"
+            Theme:Brush.Background="Background"
+            Theme:Brush.BorderBrush="Theme=Transparent, HighContrast=Text"
+            BorderThickness="1"
+            CornerRadius="6">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="0,0,8,0"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe MDL2 Assets"
+                       FontSize="16"
+                       Foreground="#FFE81123"
+                       Text="&#xEC54;" />
+            <TextBlock VerticalAlignment="Center"
+                       FontSize="13"
+                       Text="{x:Static resx:Resources.MicMutedText}" />
+        </StackPanel>
+    </Border>
+</Window>

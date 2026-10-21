@@ -14,6 +14,15 @@ namespace Mixr.Extensions
             User32.SetWindowPos(window.GetHandle(), IntPtr.Zero, (int)left, (int)top, (int)width, (int)height, User32.WindowPosFlags.SWP_NOZORDER | User32.WindowPosFlags.SWP_NOACTIVATE);
         }
 
+        // Mixr: for on-screen overlays that must never take focus or mouse input from what the user is doing.
+        // Call from SourceInitialized.
+        public static void MakeClickThroughOverlay(this Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+            var exStyle = User32.GetWindowLong(hwnd, User32.GWL.GWL_EXSTYLE);
+            User32.SetWindowLong(hwnd, User32.GWL.GWL_EXSTYLE, exStyle | User32.WS_EX_NOACTIVATE | User32.WS_EX_TOOLWINDOW | User32.WS_EX_TRANSPARENT);
+        }
+
         public static void RaiseWindow(this Window window)
         {
             window.Topmost = true;

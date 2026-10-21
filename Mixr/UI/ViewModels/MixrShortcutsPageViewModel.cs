@@ -24,6 +24,17 @@ namespace Mixr.UI.ViewModels
         public HotkeyViewModel CycleDeviceHotkey { get; }
         public string DefaultCycleDeviceHotkey => s_hotkeyNoneText;
 
+        public HotkeyViewModel MicMuteHotkey { get; }
+        public string DefaultMicMuteHotkey => s_hotkeyNoneText;
+
+        public bool ShowMicMuteIndicator
+        {
+            get => _settings.ShowMicMuteIndicator;
+            set => _settings.ShowMicMuteIndicator = value;
+        }
+
+        private readonly AppSettings _settings;
+
         public MixrShortcutsPageViewModel(AppSettings settings) : base(null)
         {
             Title = Properties.Resources.ShortcutsPageText;
@@ -35,6 +46,8 @@ namespace Mixr.UI.ViewModels
             AbsoluteVolumeUpHotkey = new HotkeyViewModel(settings.AbsoluteVolumeUpHotkey, (newHotkey) => settings.AbsoluteVolumeUpHotkey = newHotkey);
             AbsoluteVolumeDownHotkey = new HotkeyViewModel(settings.AbsoluteVolumeDownHotkey, (newHotkey) => settings.AbsoluteVolumeDownHotkey = newHotkey);
             CycleDeviceHotkey = new HotkeyViewModel(settings.CycleDeviceHotkey, (newHotkey) => settings.CycleDeviceHotkey = newHotkey);
+            MicMuteHotkey = new HotkeyViewModel(settings.MicMuteHotkey, (newHotkey) => settings.MicMuteHotkey = newHotkey);
+            _settings = settings;
         }
     }
 }

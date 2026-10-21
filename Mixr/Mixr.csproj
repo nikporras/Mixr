@@ -334,7 +334,11 @@
     <Compile Include="UI\Helpers\AutoSwitchOnConnect.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceCycler.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceSwitcher.cs" />
+    <Compile Include="UI\Helpers\MicMuteController.cs" />
     <Compile Include="UI\Helpers\ProfileManager.cs" />
+    <Compile Include="UI\Views\MicMuteIndicator.xaml.cs">
+      <DependentUpon>MicMuteIndicator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ViewModels\MixrProfilesSettingsPageViewModel.cs" />
     <Compile Include="UI\Views\DeviceSwitchPopup.xaml.cs">
       <DependentUpon>DeviceSwitchPopup.xaml</DependentUpon>
@@ -419,6 +423,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\DeviceSwitchPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\MicMuteIndicator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
