@@ -336,6 +336,7 @@
     <Compile Include="UI\Helpers\DefaultDeviceSwitcher.cs" />
     <Compile Include="UI\Helpers\MicMuteController.cs" />
     <Compile Include="UI\Helpers\MixrCommand.cs" />
+    <Compile Include="UI\Helpers\ActiveProfileRouter.cs" />
     <Compile Include="UI\Helpers\ProfileManager.cs" />
     <Compile Include="UI\Views\MicMuteIndicator.xaml.cs">
       <DependentUpon>MicMuteIndicator.xaml</DependentUpon>

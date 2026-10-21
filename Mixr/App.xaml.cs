@@ -47,6 +47,7 @@ namespace Mixr
         private DefaultDeviceCycler _deviceCycler;
         private AutoSwitchOnConnect _autoSwitchOnConnect;
         private ProfileManager _profileManager;
+        private ActiveProfileRouter _activeProfileRouter;
         private MicMuteController _micMuteController;
         private DeviceSwitchPopup _deviceSwitchPopup;
         private CommandChannel _commandChannel;
@@ -139,8 +140,10 @@ namespace Mixr
                 CollectionViewModel,
                 WindowsAudioFactory.Create(AudioDeviceKind.Recording),
                 _defaultDeviceSwitcher,
-                new DefaultDeviceSwitcher());
+                new DefaultDeviceSwitcher(),
+                Settings);
             _profileManager.Applied += profile => ShowSwitchPopup(Mixr.Properties.Resources.ProfileAppliedFormatText.Replace("{Name}", profile.Name));
+            _activeProfileRouter = new ActiveProfileRouter(CollectionViewModel, Settings, _profileManager);
 
             _micMuteController = new MicMuteController(WindowsAudioFactory.Create(AudioDeviceKind.Recording), Settings);
 
@@ -252,19 +255,30 @@ namespace Mixr
                 });
             }
 
-            // Mixr: one click applies a saved profile.
+            // Mixr: one click applies a saved profile, which becomes the active one (ticked). "None" clears it.
             var profiles = Settings.Profiles;
             if (profiles.Any())
             {
+                var activeProfileId = Settings.ActiveProfile?.Id;
+                var profileItems = profiles.Select(profile => new ContextMenuItem
+                {
+                    DisplayName = profile.Name,
+                    IsChecked = profile.Id == activeProfileId,
+                    Command = new RelayCommand(() => _profileManager.Apply(profile)),
+                }).ToList();
+                profileItems.Add(new ContextMenuSeparator());
+                profileItems.Add(new ContextMenuItem
+                {
+                    DisplayName = Mixr.Properties.Resources.ProfileNoneText,
+                    IsChecked = activeProfileId == null,
+                    Command = new RelayCommand(() => Settings.ActiveProfileId = null),
+                });
+
                 ret.Add(new ContextMenuSeparator());
                 ret.Add(new ContextMenuItem
                 {
                     DisplayName = Mixr.Properties.Resources.ProfilesMenuText,
-                    Children = profiles.Select(profile => new ContextMenuItem
-                    {
-                        DisplayName = profile.Name,
-                        Command = new RelayCommand(() => _profileManager.Apply(profile)),
-                    }).ToList(),
+                    Children = profileItems,
                 });
             }
 
@@ -428,6 +442,13 @@ namespace Mixr
         private void ApplyProfile(string name)
         {
             var profile = Settings.Profiles.FirstOrDefault(p => string.Equals(p.Name?.Trim(), name.Trim(), StringComparison.OrdinalIgnoreCase));
+            // "none" clears the active profile, unless a profile is called that.
+            if (profile == null && string.Equals(name.Trim(), "none", StringComparison.OrdinalIgnoreCase))
+            {
+                Settings.ActiveProfileId = null;
+                ShowSwitchPopup(Mixr.Properties.Resources.ProfileAppliedFormatText.Replace("{Name}", Mixr.Properties.Resources.ProfileNoneText));
+                return;
+            }
             if (profile == null)
             {
                 Trace.WriteLine($"App ApplyProfile No profile named '{name}'");

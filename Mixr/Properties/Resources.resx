@@ -758,6 +758,9 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="DeviceVolumeFormatText" xml:space="preserve">
     <value>{Name}: {Volume}%</value>
   </data>
+  <data name="ProfileNoneText" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="NoMicrophoneText" xml:space="preserve">
     <value>No microphone</value>
   </data>

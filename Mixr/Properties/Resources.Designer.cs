@@ -1980,6 +1980,15 @@ namespace Mixr.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string ProfileNoneText {
+            get {
+                return ResourceManager.GetString("ProfileNoneText", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to No microphone.
         /// </summary>
         public static string NoMicrophoneText {

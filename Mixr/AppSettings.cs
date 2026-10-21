@@ -431,7 +431,33 @@ namespace Mixr
         public void DeleteProfile(string profileId)
         {
             Profiles = Profiles.Where(p => p.Id != profileId).ToArray();
+            if (ActiveProfileId == profileId)
+            {
+                ActiveProfileId = null;
+            }
         }
+
+        // Mixr: the profile applied last, whose app routes are applied again when those apps start. Null for none.
+        public event Action ActiveProfileChanged;
+
+        public string ActiveProfileId
+        {
+            get
+            {
+                var id = _settings.Get("ActiveProfileId", "");
+                return string.IsNullOrEmpty(id) ? null : id;
+            }
+            set
+            {
+                if (value != ActiveProfileId)
+                {
+                    _settings.Set("ActiveProfileId", value ?? "");
+                    ActiveProfileChanged?.Invoke();
+                }
+            }
+        }
+
+        public AudioProfile ActiveProfile => ActiveProfileId == null ? null : Profiles.FirstOrDefault(p => p.Id == ActiveProfileId);
 
         public bool UseScrollWheelInTray
         {

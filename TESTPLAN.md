@@ -14,6 +14,7 @@ Manual tests to run before a release. Tick each box as it passes. Add tests here
 | Daily use version | Not tested yet |
 | Command line and mixr:// actions | Not tested yet |
 | Dev build look | Not tested yet |
+| Active profile | Not tested yet |
 
 ## Setup (before every test run)
 
@@ -156,6 +157,28 @@ Setup: Windows accent colour set to something that isn't red (e.g. the default b
 - [ ] Exit, start `C:\Apps\Mixr\Mixr.exe`: no dot, tooltip starts with "Mixr:", the title is "Settings", and the Windows accent colour is used
 - [ ] Sign out and in: only the stable copy starts (the dev one is no longer under Settings > Apps > Startup)
 
+## 9. Active profile
+
+Setup: two playback devices (speakers, headset). Two profiles from section 4: "Work" routes Spotify to the headset, "Gaming" has Spotify following the default. Close Spotify.
+
+- [ ] Tray right click > Profiles: no profile is ticked, **None** is ticked (first time after updating)
+- [ ] Apply Work from the menu: Work is ticked next time you open it, None isn't
+- [ ] Before starting Spotify, move it in Windows (Settings > Sound > Volume mixer) to the speakers, then close it. Start Spotify and play: within a second or two it moves to the headset (flyout shows it under the headset), sound comes out of the headset
+- [ ] Close and start Spotify again: it starts on the headset straight away (Windows remembers), nothing moves
+- [ ] With Spotify running, move it to the speakers from the flyout: it stays on the speakers (a manual move isn't undone)
+- [ ] Close and start Spotify again: it goes back to the headset (the profile wins on the next start)
+- [ ] Apply Gaming, close Spotify, move it to the headset in Windows, start it: it moves to the default output
+- [ ] Profiles > **None**: None is ticked. Start Spotify after moving it in Windows: it stays where Windows put it
+- [ ] An app that isn't in the active profile (e.g. a browser) is never moved when it starts
+- [ ] A profile app whose saved device is unplugged: starting it does nothing and nothing breaks
+- [ ] Apps already running when Mixr starts, and apps on a device you plug in, aren't moved
+- [ ] An app that pauses and plays again (session comes and goes) isn't moved back and forth
+- [ ] `Mixr.exe profile Work` and `mixr://profile/none` set and clear the active profile (popup says "Profile: None")
+- [ ] Delete the active profile on the Profiles page: None is ticked in the menu
+- [ ] **Replace with current setup** on the active profile: starting its apps uses the new routes
+- [ ] Exit and restart Mixr: the same profile is still ticked, and starting its apps still routes them
+- [ ] Hotkeys, auto switch, commands and applying profiles still work as before
+
 ## If something fails
 
-Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager`, `MicMuteController`, `App RunCommand`, `CommandChannel`, `ProtocolRegistration` or `StorageFactory Using`.
+Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager`, `ActiveProfileRouter`, `MicMuteController`, `App RunCommand`, `CommandChannel`, `ProtocolRegistration` or `StorageFactory Using`.

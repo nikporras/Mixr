@@ -16,13 +16,15 @@ namespace Mixr.UI.Helpers
         private readonly IAudioDeviceManager _recording;
         private readonly DefaultDeviceSwitcher _playbackSwitcher;
         private readonly DefaultDeviceSwitcher _recordingSwitcher;
+        private readonly AppSettings _settings;
 
-        public ProfileManager(DeviceCollectionViewModel playback, IAudioDeviceManager recording, DefaultDeviceSwitcher playbackSwitcher, DefaultDeviceSwitcher recordingSwitcher)
+        public ProfileManager(DeviceCollectionViewModel playback, IAudioDeviceManager recording, DefaultDeviceSwitcher playbackSwitcher, DefaultDeviceSwitcher recordingSwitcher, AppSettings settings)
         {
             _playback = playback;
             _recording = recording;
             _playbackSwitcher = playbackSwitcher;
             _recordingSwitcher = recordingSwitcher;
+            _settings = settings;
         }
 
         // Fills the profile with the current default output, default microphone and the routing of every running app.
@@ -63,6 +65,9 @@ namespace Mixr.UI.Helpers
         {
             Trace.WriteLine($"ProfileManager Apply {profile.Name}");
 
+            // The applied profile becomes the active one, so its apps are routed again when they start (ActiveProfileRouter).
+            _settings.ActiveProfileId = profile.Id;
+
             // Apps first, so apps set to follow the default move along with the default output below.
             foreach (var route in profile.AppRoutes ?? new AppRoute[] { })
             {
@@ -96,7 +101,7 @@ namespace Mixr.UI.Helpers
             Applied?.Invoke(profile);
         }
 
-        private void ApplyAppRoute(AppRoute route)
+        public void ApplyAppRoute(AppRoute route)
         {
             try
             {
@@ -128,7 +133,7 @@ namespace Mixr.UI.Helpers
             }
         }
 
-        private static string ReadPersistedOutputDevice(IAppItemViewModel app)
+        public static string ReadPersistedOutputDevice(IAppItemViewModel app)
         {
             try
             {
