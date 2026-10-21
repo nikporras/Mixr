@@ -21,6 +21,15 @@ Volume and device control for Windows. A personal fork of [EarTrumpet](https://g
 
 See [COMPILING.md](COMPILING.md).
 
+## Daily use version
+
+Run `.\publish-stable.ps1` to install a stable copy for everyday use. It closes any running Mixr, builds Release x86, copies it to `C:\Apps\Mixr`, adds a shortcut to the Startup folder so it starts at login, and starts it.
+
+- **Stable**: `C:\Apps\Mixr\Mixr.exe`, unpackaged, settings in the registry (`HKCU\Software\Mixr`).
+- **Dev**: F5 in Visual Studio (`Mixr.Package`), packaged, settings in the package's LocalSettings.
+
+The two have separate settings. Only one Mixr can run at a time, so quit the stable one from the tray before pressing F5, and start it again afterwards.
+
 ## Credits
 
 Mixr is built on EarTrumpet by File-New-Project and its contributors and translators, used under the MIT license. See [LICENSE](LICENSE). The upstream changelog is kept in [CHANGELOG.md](CHANGELOG.md).

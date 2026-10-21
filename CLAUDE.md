@@ -15,6 +15,12 @@ Windows tray app for volume and audio device control. Fork of EarTrumpet (MIT), 
 - Settings: the packaged app uses package LocalSettings (`%LOCALAPPDATA%\Packages\nikporras.Mixr_1sdd7yawvg6ne`), but running `Build\Debug\Mixr.exe` directly uses `HKCU\Software\Mixr`, so settings look lost. Only one Mixr runs at a time; a stray unpackaged instance makes a packaged launch exit and also locks `Build\Debug\Mixr.exe` for the build.
 - `PublisherDisplayName` must be the same in `Mixr.Package/Package.appxmanifest` and `Mixr.Package/Package.StoreAssociation.xml` (currently `nikporras`), or the package build fails with APPX1603.
 
+## Daily use version
+
+- `publish-stable.ps1` closes any running Mixr, builds Release x86 (`Mixr/Mixr.csproj` only, so the package version isn't bumped), mirrors `Build\Release` to `C:\Apps\Mixr`, creates `Mixr.lnk` in the Startup folder and starts it. Don't run it unless asked.
+- Stable: `C:\Apps\Mixr\Mixr.exe`, unpackaged, settings in `HKCU\Software\Mixr`. Dev: F5 on `Mixr.Package`, packaged LocalSettings. Separate settings.
+- Only one Mixr runs at a time: if the stable one is running, an F5 launch exits. Quit it from the tray first.
+
 ## Layout
 
 - `Mixr/` main app
