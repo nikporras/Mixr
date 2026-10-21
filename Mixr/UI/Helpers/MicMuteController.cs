@@ -26,19 +26,23 @@ namespace Mixr.UI.Helpers
         }
 
         // Returns the new mute state, or null if there is no microphone.
-        public bool? ToggleMute()
+        public bool? ToggleMute() => SetMute(null);
+
+        // Mutes (true), unmutes (false) or toggles (null) the default microphone.
+        // Returns the new mute state, or null if there is no microphone.
+        public bool? SetMute(bool? mute)
         {
             var mic = _recording.Default;
             if (mic == null)
             {
-                Trace.WriteLine("MicMuteController ToggleMute No microphone");
+                Trace.WriteLine("MicMuteController SetMute No microphone");
                 return null;
             }
 
             // Windows confirms through the volume callback, which updates the indicator.
-            var isMuted = !mic.IsMuted;
+            var isMuted = mute ?? !mic.IsMuted;
             mic.IsMuted = isMuted;
-            Trace.WriteLine($"MicMuteController ToggleMute {mic.Id} IsMuted={isMuted}");
+            Trace.WriteLine($"MicMuteController SetMute {mic.Id} IsMuted={isMuted}");
             return isMuted;
         }
 

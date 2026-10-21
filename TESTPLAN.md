@@ -11,6 +11,8 @@ Manual tests to run before a release. Tick each box as it passes. Add tests here
 | Auto switch on connect | Not tested yet |
 | Profiles | Not tested yet |
 | Mic mute hotkey | Not tested yet |
+| Daily use version | Not tested yet |
+| Command line and mixr:// actions | Not tested yet |
 
 ## Setup (before every test run)
 
@@ -102,6 +104,45 @@ Setup: Settings > Shortcuts, set **Mute or unmute the default microphone** to an
 - [ ] Exit and restart Mixr while muted: the badge shows again on startup; the shortcut and the indicator setting are kept
 - [ ] Cycle hotkey popup still shows the speaker icon
 
+## 6. Daily use version
+
+Setup: exit every Mixr. Open PowerShell in the repo folder. This section uses the stable copy, not F5.
+
+- [ ] Run `.\publish-stable.ps1`: it builds without errors, ends with "Done", and the Mixr tray icon appears
+- [ ] Task Manager > Details > Mixr.exe > right click > Open file location: it opens `C:\Apps\Mixr`
+- [ ] `shell:startup` (Win+R) contains a `Mixr` shortcut pointing at `C:\Apps\Mixr\Mixr.exe`
+- [ ] Sign out and back in: Mixr starts on its own, from `C:\Apps\Mixr`, with a single tray icon
+- [ ] Change some settings (hide a device, set a shortcut, save a profile), exit Mixr from the tray, start `C:\Apps\Mixr\Mixr.exe` again: the settings are kept
+- [ ] They are not in the F5 dev version (separate settings), and dev settings don't show up in the stable one
+- [ ] With the stable one running, press F5 in Visual Studio: the dev one exits at once, the stable tray icon stays
+- [ ] Exit the stable one, press F5, then start `C:\Apps\Mixr\Mixr.exe`: it exits at once, the dev one keeps running
+- [ ] With the stable one running, make a small visible change (or just pull new commits) and run `.\publish-stable.ps1` again: it closes Mixr, copies, restarts it, and the change shows. Settings are kept
+- [ ] Only one `Mixr` shortcut is in the Startup folder after running the script twice
+
+## 7. Command line and mixr:// actions
+
+Setup: run `.\publish-stable.ps1` once (it registers `mixr://` links). Have two or three playback devices, at least one profile saved, and the mic mute hotkey section working. Open PowerShell and `cd C:\Apps\Mixr`. Type the links into Win+R.
+
+- [ ] `.\Mixr.exe cycle`: the default changes to the next "Include in cycle" device with the popup, and no second tray icon appears
+- [ ] `.\Mixr.exe device "Speakers"` (use a real device name, or its custom name): it becomes the default, with the popup
+- [ ] Part of a name works when only one device has it (e.g. `.\Mixr.exe device head`); a name nobody has shows "Not found: …"
+- [ ] `.\Mixr.exe device "{0.0.0.00000000}.{…}"` with a real id (Settings > Devices doesn't show ids; copy one from the diagnostic data): it switches
+- [ ] After `device`, `cycle` continues from that device
+- [ ] `.\Mixr.exe profile "Work"`: the popup says "Profile: Work" and the profile applies; `profile work` (other case) works too; an unknown name shows "Not found: …"
+- [ ] `.\Mixr.exe mic mute`, `mic unmute`, `mic toggle` (and plain `mic`): the mic state, popup and badge follow
+- [ ] `.\Mixr.exe volume 30`: the default device goes to 30% and the popup says "<device>: 30%"
+- [ ] `volume +10`, `volume -10`, `volume up`, `volume down 2`: change it by 10, 10, 5 and 2; `volume 150` gives 100, `volume -200` gives 0
+- [ ] Win+R `mixr://cycle`, `mixr://device/Speakers`, `mixr://profile/Work`, `mixr://mic/toggle`, `mixr://volume/50`, `mixr://volume/up/10`: each does the same as the command line
+- [ ] A name with spaces as a link: `mixr://profile/My%20Profile` and `mixr://device/My%20Headphones`
+- [ ] The same links from a browser address bar (allow the "Open Mixr?" prompt): they work
+- [ ] Unknown commands (`.\Mixr.exe nonsense`, `mixr://nonsense`) do nothing and nothing breaks
+- [ ] Exit Mixr, then Win+R `mixr://volume/40`: Mixr starts, stays in the tray, and sets 40%
+- [ ] Exit the stable one and press F5: `C:\Apps\Mixr\Mixr.exe cycle` and `mixr://cycle` control the dev one (no second icon)
+- [ ] Stream Deck: a "System > Open" action with `C:\Apps\Mixr\Mixr.exe` and arguments `cycle`, or a "Website" action with `mixr://cycle`, works on a key press
+- [ ] AutoHotkey: `^!F10::Run 'C:\Apps\Mixr\Mixr.exe volume up'` (v2) raises the volume with no flashing window
+- [ ] Press a command key about 10 times very fast: no stutter, the final state matches the last popup
+- [ ] Hotkeys, auto switch and the tray menu still work as before
+
 ## If something fails
 
-Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager`, `MicMuteController` or `StorageFactory Using`.
+Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager`, `MicMuteController`, `App RunCommand`, `CommandChannel`, `ProtocolRegistration` or `StorageFactory Using`.

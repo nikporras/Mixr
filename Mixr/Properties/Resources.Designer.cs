@@ -1960,7 +1960,25 @@ namespace Mixr.Properties {
                 return ResourceManager.GetString("MicUnmutedText", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Not found: {Name}.
+        /// </summary>
+        public static string CommandNotFoundFormatText {
+            get {
+                return ResourceManager.GetString("CommandNotFoundFormatText", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {Name}: {Volume}%.
+        /// </summary>
+        public static string DeviceVolumeFormatText {
+            get {
+                return ResourceManager.GetString("DeviceVolumeFormatText", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to No microphone.
         /// </summary>

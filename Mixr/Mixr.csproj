@@ -335,6 +335,7 @@
     <Compile Include="UI\Helpers\DefaultDeviceCycler.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceSwitcher.cs" />
     <Compile Include="UI\Helpers\MicMuteController.cs" />
+    <Compile Include="UI\Helpers\MixrCommand.cs" />
     <Compile Include="UI\Helpers\ProfileManager.cs" />
     <Compile Include="UI\Views\MicMuteIndicator.xaml.cs">
       <DependentUpon>MicMuteIndicator.xaml</DependentUpon>
@@ -347,6 +348,8 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interop\Helpers\SingleInstanceAppMutex.cs" />
+    <Compile Include="Interop\Helpers\CommandChannel.cs" />
+    <Compile Include="Interop\Helpers\ProtocolRegistration.cs" />
     <Compile Include="UI\Controls\VolumeSlider.cs" />
     <Compile Include="DataModel\WindowsAudio\Internal\AudioDeviceSessionGroup.cs" />
     <Compile Include="Interop\MMDeviceAPI\AudioSessionDisconnectReason.cs" />

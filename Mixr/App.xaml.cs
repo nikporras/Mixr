@@ -44,6 +44,8 @@ namespace Mixr
         private ProfileManager _profileManager;
         private MicMuteController _micMuteController;
         private DeviceSwitchPopup _deviceSwitchPopup;
+        private CommandChannel _commandChannel;
+        private string[] _startupArgs = new string[] { };
         private ErrorReporter _errorReporter;
 
         public static AppSettings Settings { get; private set; }
@@ -64,6 +66,8 @@ namespace Mixr
             if (SingleInstanceAppMutex.TakeExclusivity())
             {
                 Exit += (_, __) => SingleInstanceAppMutex.ReleaseExclusivity();
+                // Mixr: a command (e.g. from a mixr:// link) that started Mixr runs once startup completes.
+                _startupArgs = e.Args;
 
                 try
                 {
@@ -78,6 +82,12 @@ namespace Mixr
             else
             {
                 // Mixr: another Mixr (packaged or not) is already running and keeps the tray icon.
+                // Any command goes to it instead.
+                if (e.Args.Length > 0)
+                {
+                    var sent = CommandChannel.Send(e.Args, TimeSpan.FromSeconds(10));
+                    Trace.WriteLine($"App OnAppStartup Sent command to running instance: {sent}");
+                }
                 Trace.WriteLine("App OnAppStartup Another instance is running, exiting");
                 Shutdown();
             }
@@ -144,7 +154,20 @@ namespace Mixr
             _trayIcon.SetTooltip(CollectionViewModel.GetTrayToolTip());
             _trayIcon.IsVisible = true;
 
+            // Mixr: Mixr.exe arguments and mixr:// links, from later launches and the one that started Mixr.
+            _commandChannel = new CommandChannel(RunCommand);
+            Exit += (_, __) => _commandChannel.Dispose();
+            if (!HasIdentity)
+            {
+                ProtocolRegistration.RegisterForCurrentUser(MixrCommand.UriScheme);
+            }
+
             DisplayFirstRunExperience();
+
+            if (_startupArgs.Length > 0)
+            {
+                RunCommand(_startupArgs);
+            }
         }
 
         private void trayIconScrolled(object _, int wheelDelta)
@@ -339,12 +362,98 @@ namespace Mixr
             }
         }
 
-        // Mixr: mute or unmute the default microphone and say which it is now.
-        private void ToggleMicMute()
+        // Mixr: runs a command from Mixr.exe arguments or a mixr:// link (see MixrCommand).
+        private void RunCommand(string[] args)
         {
             try
             {
-                var isMuted = _micMuteController.ToggleMute();
+                var command = MixrCommand.Parse(args);
+                if (command == null)
+                {
+                    Trace.WriteLine($"App RunCommand Unknown command: {string.Join(" ", args)}");
+                    return;
+                }
+
+                Trace.WriteLine($"App RunCommand {command}");
+                switch (command.Kind)
+                {
+                    case MixrCommandKind.Device:
+                        SwitchToDevice(command.Argument);
+                        break;
+                    case MixrCommandKind.Cycle:
+                        CycleDefaultDevice();
+                        break;
+                    case MixrCommandKind.Profile:
+                        ApplyProfile(command.Argument);
+                        break;
+                    case MixrCommandKind.Mic:
+                        MixrCommand.TryGetMicMute(command.Argument, out var mute);
+                        SetMicMute(mute);
+                        break;
+                    case MixrCommandKind.Volume:
+                        SetDefaultDeviceVolume(command.Argument);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"App RunCommand Failed: {ex}");
+                ErrorReporter.LogWarning(ex);
+            }
+        }
+
+        private void SwitchToDevice(string nameOrId)
+        {
+            var device = MixrCommand.FindDevice(CollectionViewModel.AllDevices, nameOrId);
+            if (device == null)
+            {
+                Trace.WriteLine($"App SwitchToDevice No device matches '{nameOrId}'");
+                ShowSwitchPopup(Mixr.Properties.Resources.CommandNotFoundFormatText.Replace("{Name}", nameOrId));
+                return;
+            }
+
+            _deviceCycler.SetPosition(device.Id);
+            _defaultDeviceSwitcher.RequestDefault(device.Id);
+            ShowDeviceSwitchPopup(device);
+        }
+
+        private void ApplyProfile(string name)
+        {
+            var profile = Settings.Profiles.FirstOrDefault(p => string.Equals(p.Name?.Trim(), name.Trim(), StringComparison.OrdinalIgnoreCase));
+            if (profile == null)
+            {
+                Trace.WriteLine($"App ApplyProfile No profile named '{name}'");
+                ShowSwitchPopup(Mixr.Properties.Resources.CommandNotFoundFormatText.Replace("{Name}", name));
+                return;
+            }
+
+            // ProfileManager.Applied shows the popup.
+            _profileManager.Apply(profile);
+        }
+
+        private void SetDefaultDeviceVolume(string argument)
+        {
+            var device = CollectionViewModel.Default;
+            if (device == null || !MixrCommand.TryGetVolume(argument, device.Volume, out var volume))
+            {
+                return;
+            }
+
+            device.Volume = volume;
+            ShowSwitchPopup(Mixr.Properties.Resources.DeviceVolumeFormatText
+                .Replace("{Name}", device.DisplayName)
+                .Replace("{Volume}", volume.ToString()));
+        }
+
+        // Mixr: mute or unmute the default microphone and say which it is now.
+        private void ToggleMicMute() => SetMicMute(null);
+
+        // Mutes (true), unmutes (false) or toggles (null) the default microphone.
+        private void SetMicMute(bool? mute)
+        {
+            try
+            {
+                var isMuted = _micMuteController.SetMute(mute);
                 if (isMuted == null)
                 {
                     ShowSwitchPopup(Mixr.Properties.Resources.NoMicrophoneText, DeviceSwitchPopup.MicrophoneOffGlyph);
@@ -360,7 +469,7 @@ namespace Mixr
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"App ToggleMicMute Failed: {ex}");
+                Trace.WriteLine($"App SetMicMute Failed: {ex}");
                 ErrorReporter.LogWarning(ex);
             }
         }

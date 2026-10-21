@@ -42,6 +42,9 @@ namespace Mixr.UI.Helpers
             return next;
         }
 
+        // Continue the cycle from this device, which is about to become the default some other way.
+        public void SetPosition(string deviceId) => _positionId = deviceId;
+
         private void OnDefaultChanged(object sender, DeviceViewModel newDefault)
         {
             // The default was changed some other way (tray menu, Windows settings): continue from there next time.
