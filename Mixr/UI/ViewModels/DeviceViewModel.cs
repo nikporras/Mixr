@@ -31,7 +31,17 @@ namespace Mixr.UI.ViewModels
             Microphone,
         }
 
-        public string DisplayName => _device.DisplayName;
+        public string DisplayName
+        {
+            get
+            {
+                var customName = CustomName;
+                return string.IsNullOrWhiteSpace(customName) ? _device.DisplayName : customName;
+            }
+        }
+        public string OriginalDisplayName => _device.DisplayName;
+        public string CustomName => _settings?.GetDeviceCustomName(Id);
+        public bool IsHidden => _settings != null && _settings.IsDeviceHidden(Id);
         public string AccessibleName => IsMuted ? Properties.Resources.AppOrDeviceMutedFormatAccessibleText.Replace("{Name}", DisplayName) :
             Properties.Resources.AppOrDeviceFormatAccessibleText.Replace("{Name}", DisplayName).Replace("{Volume}", Volume.ToString());
         public string DeviceDescription => ((IAudioDeviceWindowsAudio)_device).DeviceDescription;
@@ -68,6 +78,7 @@ namespace Mixr.UI.ViewModels
         protected readonly IAudioDevice _device;
         protected readonly IAudioDeviceManager _deviceManager;
         protected readonly WeakReference<DeviceCollectionViewModel> _parent;
+        private readonly AppSettings _settings;
         private bool _isDisplayNameVisible;
         private DeviceIconKind _iconKind;
 
@@ -76,6 +87,7 @@ namespace Mixr.UI.ViewModels
             _deviceManager = deviceManager;
             _device = device;
             _parent = new WeakReference<DeviceCollectionViewModel>(parent);
+            _settings = parent?.Settings;
             Apps = new ObservableCollection<IAppItemViewModel>();
 
             _device.PropertyChanged += OnPropertyChanged;
@@ -108,6 +120,13 @@ namespace Mixr.UI.ViewModels
                 RaisePropertyChanged(nameof(DisplayName));
                 RaisePropertyChanged(nameof(AccessibleName));
             }
+        }
+
+        public void RefreshPreferences()
+        {
+            RaisePropertyChanged(nameof(DisplayName));
+            RaisePropertyChanged(nameof(AccessibleName));
+            RaisePropertyChanged(nameof(IsHidden));
         }
 
         public override void UpdatePeakValueForeground()

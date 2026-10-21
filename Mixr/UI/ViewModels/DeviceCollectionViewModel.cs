@@ -22,6 +22,7 @@ namespace Mixr.UI.ViewModels
 
         public ObservableCollection<DeviceViewModel> AllDevices { get; private set; } = new ObservableCollection<DeviceViewModel>();
         public DeviceViewModel Default { get; private set; }
+        public AppSettings Settings => _settings;
 
         private readonly IAudioDeviceManager _deviceManager;
         private readonly Timer _peakMeterTimer;
@@ -36,6 +37,7 @@ namespace Mixr.UI.ViewModels
             _deviceManager = deviceManager;
             _deviceManager.DefaultChanged += OnDefaultChanged;
             _deviceManager.Devices.CollectionChanged += OnCollectionChanged;
+            _settings.DevicePreferencesChanged += OnDevicePreferencesChanged;
             OnCollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
             _peakMeterTimer = new Timer(1000 / 30); // 30 fps
@@ -89,6 +91,15 @@ namespace Mixr.UI.ViewModels
             {
                 TrayPropertyChanged.Invoke();
             }
+        }
+
+        private void OnDevicePreferencesChanged()
+        {
+            foreach (var device in AllDevices)
+            {
+                device.RefreshPreferences();
+            }
+            TrayPropertyChanged?.Invoke();
         }
 
         protected virtual void AddDevice(IAudioDevice device)
@@ -254,6 +265,12 @@ namespace Mixr.UI.ViewModels
                 if (string.IsNullOrWhiteSpace(Default.DeviceDescription) && string.IsNullOrWhiteSpace(Default.EnumeratorName))
                 {
                     deviceName = Default.DisplayName;
+                }
+
+                // Mixr: prefer the friendly name the user chose.
+                if (!string.IsNullOrWhiteSpace(Default.CustomName))
+                {
+                    deviceName = Default.CustomName;
                 }
 
                 // Device name could be null in transient error cases

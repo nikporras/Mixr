@@ -32,7 +32,7 @@ namespace Mixr.UI.ViewModels
             {
                 var persistedDeviceId = app.PersistedOutputDevice;
 
-                var items = parent.AllDevices.Select(dev => new ContextMenuItem
+                var items = parent.AllDevices.Where(dev => !dev.IsHidden || dev.Id == persistedDeviceId).Select(dev => new ContextMenuItem
                 {
                     DisplayName = dev.DisplayName,
                     Command = new RelayCommand(() =>

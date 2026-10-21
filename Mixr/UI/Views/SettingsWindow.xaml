@@ -161,6 +161,32 @@
                 </Grid>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MixrDevicesSettingsPageViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource BodyText}" Text="{x:Static resx:Resources.DevicesSettingsDescriptionText}" />
+                <ItemsControl Focusable="False" ItemsSource="{Binding Devices}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,12,0,0" Orientation="Vertical">
+                                <TextBlock FontWeight="SemiBold"
+                                           Style="{StaticResource BodyText}"
+                                           Text="{Binding OriginalName}" />
+                                <CheckBox HorizontalAlignment="Left"
+                                          Content="{x:Static resx:Resources.DeviceShowInMixrText}"
+                                          IsChecked="{Binding IsShown, Mode=TwoWay}" />
+                                <TextBlock Style="{StaticResource BodySubText}"
+                                           Margin="12,0"
+                                           Text="{x:Static resx:Resources.DeviceCustomNameText}" />
+                                <TextBox Width="320"
+                                         HorizontalAlignment="Left"
+                                         AutomationProperties.Name="{x:Static resx:Resources.DeviceCustomNameText}"
+                                         Text="{Binding CustomName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:MixrMouseSettingsPageViewModel}">
             <StackPanel Orientation="Vertical">
                 <CheckBox HorizontalAlignment="Left"

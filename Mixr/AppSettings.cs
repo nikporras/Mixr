@@ -133,6 +133,114 @@ namespace Mixr
             set => _settings.Set("IsExpanded", value);
         }
 
+        // Mixr: per-device preferences (hidden devices and friendly names).
+        public event Action DevicePreferencesChanged;
+
+        private string[] _hiddenDeviceIds;
+        private DeviceNameEntry[] _deviceNames;
+
+        private string[] HiddenDeviceIds
+        {
+            get
+            {
+                if (_hiddenDeviceIds == null)
+                {
+                    try
+                    {
+                        _hiddenDeviceIds = _settings.Get("HiddenDeviceIds", new string[] { }) ?? new string[] { };
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"AppSettings HiddenDeviceIds read failed: {ex}");
+                        _hiddenDeviceIds = new string[] { };
+                    }
+                }
+                return _hiddenDeviceIds;
+            }
+            set
+            {
+                _hiddenDeviceIds = value;
+                _settings.Set("HiddenDeviceIds", value);
+            }
+        }
+
+        private DeviceNameEntry[] DeviceNames
+        {
+            get
+            {
+                if (_deviceNames == null)
+                {
+                    try
+                    {
+                        _deviceNames = _settings.Get("DeviceNames", new DeviceNameEntry[] { }) ?? new DeviceNameEntry[] { };
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"AppSettings DeviceNames read failed: {ex}");
+                        _deviceNames = new DeviceNameEntry[] { };
+                    }
+                }
+                return _deviceNames;
+            }
+            set
+            {
+                _deviceNames = value;
+                _settings.Set("DeviceNames", value);
+            }
+        }
+
+        public bool IsDeviceHidden(string deviceId)
+        {
+            return !string.IsNullOrEmpty(deviceId) && HiddenDeviceIds.Contains(deviceId);
+        }
+
+        public void SetDeviceHidden(string deviceId, bool isHidden)
+        {
+            if (string.IsNullOrEmpty(deviceId) || IsDeviceHidden(deviceId) == isHidden)
+            {
+                return;
+            }
+
+            var ids = HiddenDeviceIds.Where(id => id != deviceId).ToList();
+            if (isHidden)
+            {
+                ids.Add(deviceId);
+            }
+            HiddenDeviceIds = ids.ToArray();
+            DevicePreferencesChanged?.Invoke();
+        }
+
+        public string GetDeviceCustomName(string deviceId)
+        {
+            if (string.IsNullOrEmpty(deviceId))
+            {
+                return null;
+            }
+            return DeviceNames.FirstOrDefault(d => d.Id == deviceId)?.Name;
+        }
+
+        public void SetDeviceCustomName(string deviceId, string name)
+        {
+            if (string.IsNullOrEmpty(deviceId))
+            {
+                return;
+            }
+
+            name = name?.Trim() ?? "";
+            if ((GetDeviceCustomName(deviceId) ?? "") == name)
+            {
+                return;
+            }
+
+            var names = DeviceNames.Where(d => d.Id != deviceId).ToList();
+            if (name.Length > 0)
+            {
+                names.Add(new DeviceNameEntry { Id = deviceId, Name = name });
+            }
+            DeviceNames = names.ToArray();
+            DevicePreferencesChanged?.Invoke();
+        }
+
         public bool UseScrollWheelInTray
         {
             get => _settings.Get("UseScrollWheelInTray", true);
@@ -264,5 +372,12 @@ namespace Mixr
             var region = new Windows.Globalization.GeographicRegion();
             return !europeanUnionRegions.Contains(region.CodeTwoLetter);
         }
+    }
+
+    // Mixr: a friendly name the user gave to an audio device.
+    public class DeviceNameEntry
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

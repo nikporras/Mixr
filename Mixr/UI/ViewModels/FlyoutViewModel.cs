@@ -19,7 +19,7 @@ namespace Mixr.UI.ViewModels
         public ModalDialogViewModel Dialog { get; }
         public bool IsExpanded { get; private set; }
         public bool IsExpandingOrCollapsing { get; private set; }
-        public bool CanExpand => _mainViewModel.AllDevices.Count > 1;
+        public bool CanExpand => _mainViewModel.AllDevices.Count(ShouldShowDevice) > 1;
         public string DeviceNameText => Devices.Count > 0 ? Devices[0].DisplayName : null;
         public FlyoutViewState State { get; private set; }
         public ObservableCollection<DeviceViewModel> Devices { get; private set; }
@@ -47,6 +47,7 @@ namespace Mixr.UI.ViewModels
             _mainViewModel.DefaultChanged += OnDefaultPlaybackDeviceChanged;
             _mainViewModel.AllDevices.CollectionChanged += AllDevices_CollectionChanged;
             AllDevices_CollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            _settings.DevicePreferencesChanged += OnDevicePreferencesChanged;
 
             // This timer is used to enable clicking on the tray icon while the flyout is open, and not causing a
             // rapid hide and show cycle.  This time represents the minimum time between which the flyout may be opened.
@@ -76,8 +77,37 @@ namespace Mixr.UI.ViewModels
             ChangeState(FlyoutViewState.Hidden);
         }
 
+        // Mixr: hidden devices stay out of the flyout, except the current default device.
+        private bool ShouldShowDevice(DeviceViewModel device)
+        {
+            return !device.IsHidden || device.Id == _mainViewModel.Default?.Id;
+        }
+
+        private void OnDevicePreferencesChanged()
+        {
+            // Rebuild the visible list so newly hidden or shown devices take effect.
+            AllDevices_CollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        private void RemoveHiddenDevices()
+        {
+            for (int i = Devices.Count - 1; i >= 0; i--)
+            {
+                if (!ShouldShowDevice(Devices[i]))
+                {
+                    Devices[i].Apps.CollectionChanged -= Apps_CollectionChanged;
+                    Devices.RemoveAt(i);
+                }
+            }
+        }
+
         private void AddDevice(DeviceViewModel device)
         {
+            if (!ShouldShowDevice(device))
+            {
+                return;
+            }
+
             if (IsExpanded || Devices.Count == 0)
             {
                 device.Apps.CollectionChanged += Apps_CollectionChanged;
@@ -167,7 +197,13 @@ namespace Mixr.UI.ViewModels
             else
             {
                 var foundAllDevice = _mainViewModel.AllDevices.FirstOrDefault(d => d.Id == e.Id);
-                if (foundAllDevice != null)
+                if (foundAllDevice != null && IsExpanded)
+                {
+                    // Mixr: a hidden device just became default while expanded. Show it at the bottom.
+                    foundAllDevice.Apps.CollectionChanged += Apps_CollectionChanged;
+                    Devices.Add(foundAllDevice);
+                }
+                else if (foundAllDevice != null)
                 {
                     // We found the device in AllDevices which was not in Devices.
                     // Thus: We are collapsed and can dump the single device in Devices:
@@ -175,6 +211,11 @@ namespace Mixr.UI.ViewModels
                     foundAllDevice.Apps.CollectionChanged += Apps_CollectionChanged;
                     Devices.Add(foundAllDevice);
                 }
+            }
+
+            if (IsExpanded)
+            {
+                RemoveHiddenDevices();
             }
             UpdateTextVisibility();
             RaiseDevicesChanged();
@@ -198,7 +239,7 @@ namespace Mixr.UI.ViewModels
                 // Add any that aren't existing.
                 foreach (var device in _mainViewModel.AllDevices)
                 {
-                    if (!Devices.Contains(device))
+                    if (!Devices.Contains(device) && ShouldShowDevice(device))
                     {
                         device.Apps.CollectionChanged += Apps_CollectionChanged;
                         Devices.Insert(0, device);

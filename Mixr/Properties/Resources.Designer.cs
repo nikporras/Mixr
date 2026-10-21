@@ -855,6 +855,51 @@ namespace Mixr.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Devices.
+        /// </summary>
+        public static string DevicesSettingsPageText {
+            get {
+                return ResourceManager.GetString("DevicesSettingsPageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose which playback devices appear in the flyout and the t.
+        /// </summary>
+        public static string DevicesSettingsDescriptionText {
+            get {
+                return ResourceManager.GetString("DevicesSettingsDescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show in Mixr.
+        /// </summary>
+        public static string DeviceShowInMixrText {
+            get {
+                return ResourceManager.GetString("DeviceShowInMixrText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Custom name (leave empty to use the original).
+        /// </summary>
+        public static string DeviceCustomNameText {
+            get {
+                return ResourceManager.GetString("DeviceCustomNameText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide from Mixr.
+        /// </summary>
+        public static string HideDeviceText {
+            get {
+                return ResourceManager.GetString("HideDeviceText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mouse settings.
         /// </summary>
         public static string MouseSettingsPageText {

@@ -15,7 +15,8 @@ namespace Mixr.UI.ViewModels
 
         public ObservableCollection<object> Addons { get; }
 
-        public bool IsApplicable => (Addons != null && Addons.Count > 0);
+        // Mixr: always applicable, since every device gets the Hide / Show button.
+        public bool IsApplicable => true;
 
         public FocusedDeviceViewModel(DeviceCollectionViewModel mainViewModel, DeviceViewModel device)
         {
@@ -28,6 +29,23 @@ namespace Mixr.UI.ViewModels
                 Glyph = "\uE8BB",
                 Command = new RelayCommand(() => RequestClose.Invoke())
             });
+
+            var settings = mainViewModel.Settings;
+            if (settings != null)
+            {
+                var isHidden = device.IsHidden;
+                Toolbar.Insert(0, new ToolbarItemViewModel
+                {
+                    GlyphFontSize = 16,
+                    DisplayName = isHidden ? Properties.Resources.DeviceShowInMixrText : Properties.Resources.HideDeviceText,
+                    Glyph = isHidden ? "\uE890" : "\uED1A",
+                    Command = new RelayCommand(() =>
+                    {
+                        RequestClose.Invoke();
+                        settings.SetDeviceHidden(device.Id, !isHidden);
+                    })
+                });
+            }
 
             var contentItems = AddonManager.Host.DeviceContentItems;
             if (contentItems != null)

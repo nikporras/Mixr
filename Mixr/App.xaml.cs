@@ -181,7 +181,7 @@ namespace Mixr
 
         private IEnumerable<ContextMenuItem> GetTrayContextMenuItems()
         {
-            var ret = new List<ContextMenuItem>(CollectionViewModel.AllDevices.OrderBy(x => x.DisplayName).Select(dev => new ContextMenuItem
+            var ret = new List<ContextMenuItem>(CollectionViewModel.AllDevices.Where(x => !x.IsHidden || x.Id == CollectionViewModel.Default?.Id).OrderBy(x => x.DisplayName).Select(dev => new ContextMenuItem
             {
                 DisplayName = dev.DisplayName,
                 IsChecked = dev.Id == CollectionViewModel.Default?.Id,
@@ -244,6 +244,7 @@ namespace Mixr
                 null,
                 new SettingsPageViewModel[]
                     {
+                        new MixrDevicesSettingsPageViewModel(Settings, CollectionViewModel),
                         new MixrShortcutsPageViewModel(Settings),
                         new MixrMouseSettingsPageViewModel(Settings),
                         new MixrCommunitySettingsPageViewModel(Settings),

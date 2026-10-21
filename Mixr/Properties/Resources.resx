@@ -665,4 +665,19 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="SettingsUseLogarithmicVolume" xml:space="preserve">
     <value>Use logarithmic volume scale</value>
   </data>
+  <data name="DevicesSettingsPageText" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="DevicesSettingsDescriptionText" xml:space="preserve">
+    <value>Choose which playback devices appear in the flyout and the tray menu, and give them friendly names. The current default device always shows. Names are saved when you leave the text box.</value>
+  </data>
+  <data name="DeviceShowInMixrText" xml:space="preserve">
+    <value>Show in Mixr</value>
+  </data>
+  <data name="DeviceCustomNameText" xml:space="preserve">
+    <value>Custom name (leave empty to use the original)</value>
+  </data>
+  <data name="HideDeviceText" xml:space="preserve">
+    <value>Hide from Mixr</value>
+  </data>
 </root>

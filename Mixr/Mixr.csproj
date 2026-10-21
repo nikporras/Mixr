@@ -233,6 +233,7 @@
     <Compile Include="UI\Helpers\TaskbarIconSource.cs" />
     <Compile Include="UI\ViewModels\BackstackViewModel.cs" />
     <Compile Include="UI\ViewModels\MixrCommunitySettingsPageViewModel.cs" />
+    <Compile Include="UI\ViewModels\MixrDevicesSettingsPageViewModel.cs" />
     <Compile Include="UI\ViewModels\MixrMouseSettingsPageViewModel.cs" />
     <Compile Include="UI\ViewModels\MixrShortcutsPageViewModel.cs" />
     <Compile Include="Extensibility\IMixrAddonAppContent.cs" />
