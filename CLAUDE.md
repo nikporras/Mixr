@@ -38,15 +38,18 @@ Windows tray app for volume and audio device control. Fork of EarTrumpet (MIT), 
 - Mark Mixr-specific changes in upstream code with a short `// Mixr:` comment.
 - Keep the original EarTrumpet notice in `LICENSE`.
 - Commit messages: short summary line, then bullet points of what changed.
+- After each feature: add its manual test steps as a new numbered section in `TESTPLAN.md` (checkbox list, setup line first) and add a row to its Status table with "Not tested yet". Only the user changes a status to passed.
 
 ## Done
 
 - Rename to Mixr, modern SDK, own package identity (`nikporras.Mixr`)
 - Hide and rename playback devices: `AppSettings` (`IsDeviceHidden`, `SetDeviceHidden`, `GetDeviceCustomName`, `SetDeviceCustomName`, `DevicePreferencesChanged`), Settings > Devices page (`MixrDevicesSettingsPageViewModel`), right-click Hide/Show button on devices (`FocusedDeviceViewModel`). Hidden devices are left out of the flyout, tray menu and app "move to device" menu; the current default always shows.
-- Cycle hotkey: "Include in cycle" tick box per device on the Devices page (`AppSettings.IsDeviceInCycle`/`SetDeviceInCycle`, stored as `CycleDeviceIds`), shortcut on the Shortcuts page (`CycleDeviceHotkey`, no default). `UI/Helpers/DefaultDeviceCycler` keeps its own cycle position (reset when the default changes some other way) and applies the switch on a background task, coalescing rapid presses to the latest target; `UI/Views/DeviceSwitchPopup` shows its name for 1.5 s, bottom centre, without taking focus.
+- Cycle hotkey: "Include in cycle" tick box per device on the Devices page (`AppSettings.IsDeviceInCycle`/`SetDeviceInCycle`, stored as `CycleDeviceIds`), shortcut on the Shortcuts page (`CycleDeviceHotkey`, no default). `UI/Helpers/DefaultDeviceCycler` keeps its own cycle position (reset when the default changes some other way); `UI/Views/DeviceSwitchPopup` shows its name for 1.5 s, bottom centre, without taking focus.
+
+- Auto switch on connect: "Switch to it when it connects…" tick box per device (`AppSettings.IsDeviceAutoSwitch`, stored as `AutoSwitchDeviceIds`). `UI/Helpers/AutoSwitchOnConnect` watches `AllDevices` adds/removes, remembers the previous default, and switches back on disconnect unless the user picked another device more than 2 s before it (Windows' own default change on disconnect is ignored). Shows `DeviceSwitchPopup` too.
+- `UI/Helpers/DefaultDeviceSwitcher` is the one place that sets the default output for both features: off the UI thread, coalescing to the latest request, failures logged. Use it rather than `DeviceViewModel.MakeDefaultDevice` for anything automatic or rapid.
 
 ## Roadmap (in order)
 
-1. **Auto switch on connect**: when a chosen device appears (headphones, Quest Link), make it default; switch back when it disconnects.
-2. **Profiles**: one click sets default output, default mic and per-app routing together (can build on the Actions addon).
-3. Later: mic mute hotkey with indicator, command line / `mixr://` actions for Stream Deck, Equalizer APO preset switcher, hardware sliders.
+1. **Profiles**: one click sets default output, default mic and per-app routing together (can build on the Actions addon).
+2. Later: mic mute hotkey with indicator, command line / `mixr://` actions for Stream Deck, Equalizer APO preset switcher, hardware sliders.

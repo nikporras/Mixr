@@ -331,7 +331,9 @@
     <Compile Include="UI\Views\DialogWindow.xaml.cs">
       <DependentUpon>DialogWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Helpers\AutoSwitchOnConnect.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceCycler.cs" />
+    <Compile Include="UI\Helpers\DefaultDeviceSwitcher.cs" />
     <Compile Include="UI\Views\DeviceSwitchPopup.xaml.cs">
       <DependentUpon>DeviceSwitchPopup.xaml</DependentUpon>
     </Compile>

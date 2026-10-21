@@ -38,7 +38,9 @@ namespace Mixr
         private ShellNotifyIcon _trayIcon;
         private WindowHolder _mixerWindow;
         private WindowHolder _settingsWindow;
+        private DefaultDeviceSwitcher _defaultDeviceSwitcher;
         private DefaultDeviceCycler _deviceCycler;
+        private AutoSwitchOnConnect _autoSwitchOnConnect;
         private DeviceSwitchPopup _deviceSwitchPopup;
         private ErrorReporter _errorReporter;
 
@@ -107,6 +109,12 @@ namespace Mixr
 #endif
             _mixerWindow = new WindowHolder(CreateMixerExperience);
             _settingsWindow = new WindowHolder(CreateSettingsExperience);
+
+            // Mixr: the cycle hotkey and auto switch share one switcher so their requests coalesce instead of racing.
+            _defaultDeviceSwitcher = new DefaultDeviceSwitcher();
+            _deviceCycler = new DefaultDeviceCycler(CollectionViewModel, Settings, _defaultDeviceSwitcher);
+            _autoSwitchOnConnect = new AutoSwitchOnConnect(CollectionViewModel, Settings, _defaultDeviceSwitcher);
+            _autoSwitchOnConnect.Switched += ShowDeviceSwitchPopup;
 
             Settings.FlyoutHotkeyTyped += () => _flyoutViewModel.OpenFlyout(InputType.Keyboard);
             Settings.MixerHotkeyTyped += () => _mixerWindow.OpenOrClose();
@@ -288,26 +296,32 @@ namespace Mixr
         {
             try
             {
-                if (_deviceCycler == null)
-                {
-                    _deviceCycler = new DefaultDeviceCycler(CollectionViewModel, Settings);
-                }
-
                 var next = _deviceCycler.Next();
-                if (next == null)
+                if (next != null)
                 {
-                    return;
+                    ShowDeviceSwitchPopup(next);
                 }
-
-                if (_deviceSwitchPopup == null)
-                {
-                    _deviceSwitchPopup = new DeviceSwitchPopup();
-                }
-                _deviceSwitchPopup.ShowDeviceName(next.DisplayName);
             }
             catch (Exception ex)
             {
                 Trace.WriteLine($"App CycleDefaultDevice Failed: {ex}");
+                ErrorReporter.LogWarning(ex);
+            }
+        }
+
+        private void ShowDeviceSwitchPopup(DeviceViewModel device)
+        {
+            try
+            {
+                if (_deviceSwitchPopup == null)
+                {
+                    _deviceSwitchPopup = new DeviceSwitchPopup();
+                }
+                _deviceSwitchPopup.ShowDeviceName(device.DisplayName);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"App ShowDeviceSwitchPopup Failed: {ex}");
                 ErrorReporter.LogWarning(ex);
             }
         }

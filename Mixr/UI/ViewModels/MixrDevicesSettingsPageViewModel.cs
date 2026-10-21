@@ -44,6 +44,16 @@ namespace Mixr.UI.ViewModels
             }
         }
 
+        public bool IsAutoSwitch
+        {
+            get => _settings.IsDeviceAutoSwitch(Id);
+            set
+            {
+                _settings.SetDeviceAutoSwitch(Id, value);
+                RaisePropertyChanged(nameof(IsAutoSwitch));
+            }
+        }
+
         public string CustomName
         {
             get => _settings.GetDeviceCustomName(Id) ?? "";

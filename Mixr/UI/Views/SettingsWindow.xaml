@@ -203,6 +203,9 @@
                                 <CheckBox HorizontalAlignment="Left"
                                           Content="{x:Static resx:Resources.DeviceIncludeInCycleText}"
                                           IsChecked="{Binding IsInCycle, Mode=TwoWay}" />
+                                <CheckBox HorizontalAlignment="Left"
+                                          Content="{x:Static resx:Resources.DeviceAutoSwitchText}"
+                                          IsChecked="{Binding IsAutoSwitch, Mode=TwoWay}" />
                                 <TextBlock Style="{StaticResource BodySubText}"
                                            Margin="12,0"
                                            Text="{x:Static resx:Resources.DeviceCustomNameText}" />

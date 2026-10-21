@@ -909,6 +909,15 @@ namespace Mixr.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Switch to it when it connects, and back when it disconnects.
+        /// </summary>
+        public static string DeviceAutoSwitchText {
+            get {
+                return ResourceManager.GetString("DeviceAutoSwitchText", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Switch to the next device in the cycle.
         /// </summary>
         public static string SettingsCycleDeviceText {

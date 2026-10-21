@@ -157,6 +157,7 @@ namespace Mixr
 
         private string[] _hiddenDeviceIds;
         private string[] _cycleDeviceIds;
+        private string[] _autoSwitchDeviceIds;
         private DeviceNameEntry[] _deviceNames;
 
         private string[] HiddenDeviceIds
@@ -206,6 +207,31 @@ namespace Mixr
             {
                 _cycleDeviceIds = value;
                 _settings.Set("CycleDeviceIds", value);
+            }
+        }
+
+        private string[] AutoSwitchDeviceIds
+        {
+            get
+            {
+                if (_autoSwitchDeviceIds == null)
+                {
+                    try
+                    {
+                        _autoSwitchDeviceIds = _settings.Get("AutoSwitchDeviceIds", new string[] { }) ?? new string[] { };
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"AppSettings AutoSwitchDeviceIds read failed: {ex}");
+                        _autoSwitchDeviceIds = new string[] { };
+                    }
+                }
+                return _autoSwitchDeviceIds;
+            }
+            set
+            {
+                _autoSwitchDeviceIds = value;
+                _settings.Set("AutoSwitchDeviceIds", value);
             }
         }
 
@@ -273,6 +299,26 @@ namespace Mixr
                 ids.Add(deviceId);
             }
             CycleDeviceIds = ids.ToArray();
+        }
+
+        public bool IsDeviceAutoSwitch(string deviceId)
+        {
+            return !string.IsNullOrEmpty(deviceId) && AutoSwitchDeviceIds.Contains(deviceId);
+        }
+
+        public void SetDeviceAutoSwitch(string deviceId, bool isAutoSwitch)
+        {
+            if (string.IsNullOrEmpty(deviceId) || IsDeviceAutoSwitch(deviceId) == isAutoSwitch)
+            {
+                return;
+            }
+
+            var ids = AutoSwitchDeviceIds.Where(id => id != deviceId).ToList();
+            if (isAutoSwitch)
+            {
+                ids.Add(deviceId);
+            }
+            AutoSwitchDeviceIds = ids.ToArray();
         }
 
         public string GetDeviceCustomName(string deviceId)

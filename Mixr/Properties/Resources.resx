@@ -683,6 +683,9 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="DeviceIncludeInCycleText" xml:space="preserve">
     <value>Include in cycle (the cycle shortcut switches between ticked devices)</value>
   </data>
+  <data name="DeviceAutoSwitchText" xml:space="preserve">
+    <value>Switch to it when it connects, and back when it disconnects</value>
+  </data>
   <data name="SettingsCycleDeviceText" xml:space="preserve">
     <value>Switch to the next device in the cycle</value>
   </data>
