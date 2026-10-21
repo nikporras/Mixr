@@ -689,4 +689,55 @@ Open [https://eartrumpet.app/jmp/fixfonts] now?</value>
   <data name="SettingsCycleDeviceText" xml:space="preserve">
     <value>Switch to the next device in the cycle</value>
   </data>
+  <data name="ProfilesSettingsPageText" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="ProfilesSettingsDescriptionText" xml:space="preserve">
+    <value>A profile sets the default output, the default microphone and where each app plays, all in one go. Set things up the way you want, then save it here. Apply a profile from the tray icon&apos;s right-click menu (Profiles) or with its Apply button. Apps are only moved if they are running when the profile is applied.</value>
+  </data>
+  <data name="ProfileSaveCurrentText" xml:space="preserve">
+    <value>Save current setup as a new profile</value>
+  </data>
+  <data name="ProfileNameText" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ProfileOutputFormatText" xml:space="preserve">
+    <value>Default output: {Name}</value>
+  </data>
+  <data name="ProfileInputFormatText" xml:space="preserve">
+    <value>Default microphone: {Name}</value>
+  </data>
+  <data name="ProfileAppRouteFormatText" xml:space="preserve">
+    <value>{App}: {Device}</value>
+  </data>
+  <data name="ProfileFollowDefaultText" xml:space="preserve">
+    <value>follows the default output</value>
+  </data>
+  <data name="ProfileUnknownDeviceText" xml:space="preserve">
+    <value>(unknown device)</value>
+  </data>
+  <data name="ProfileEmptyText" xml:space="preserve">
+    <value>This profile doesn&apos;t change anything.</value>
+  </data>
+  <data name="ProfileApplyText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ProfileReplaceText" xml:space="preserve">
+    <value>Replace with current setup</value>
+  </data>
+  <data name="ProfileDeleteText" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ProfileRemoveLineText" xml:space="preserve">
+    <value>Remove from profile</value>
+  </data>
+  <data name="ProfileDefaultNameFormatText" xml:space="preserve">
+    <value>Profile {Number}</value>
+  </data>
+  <data name="ProfilesMenuText" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="ProfileAppliedFormatText" xml:space="preserve">
+    <value>Profile: {Name}</value>
+  </data>
 </root>

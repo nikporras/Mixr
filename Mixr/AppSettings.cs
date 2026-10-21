@@ -352,6 +352,57 @@ namespace Mixr
             DevicePreferencesChanged?.Invoke();
         }
 
+        // Mixr: saved profiles (default output, default microphone and per-app routing).
+        public event Action ProfilesChanged;
+
+        private AudioProfile[] _profiles;
+
+        public AudioProfile[] Profiles
+        {
+            get
+            {
+                if (_profiles == null)
+                {
+                    try
+                    {
+                        _profiles = _settings.Get("Profiles", new AudioProfile[] { }) ?? new AudioProfile[] { };
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"AppSettings Profiles read failed: {ex}");
+                        _profiles = new AudioProfile[] { };
+                    }
+                }
+                return _profiles;
+            }
+            private set
+            {
+                _profiles = value;
+                _settings.Set("Profiles", value);
+                ProfilesChanged?.Invoke();
+            }
+        }
+
+        public void SaveProfile(AudioProfile profile)
+        {
+            var profiles = Profiles.ToList();
+            var index = profiles.FindIndex(p => p.Id == profile.Id);
+            if (index >= 0)
+            {
+                profiles[index] = profile;
+            }
+            else
+            {
+                profiles.Add(profile);
+            }
+            Profiles = profiles.ToArray();
+        }
+
+        public void DeleteProfile(string profileId)
+        {
+            Profiles = Profiles.Where(p => p.Id != profileId).ToArray();
+        }
+
         public bool UseScrollWheelInTray
         {
             get => _settings.Get("UseScrollWheelInTray", true);
@@ -490,5 +541,26 @@ namespace Mixr
     {
         public string Id { get; set; }
         public string Name { get; set; }
+    }
+
+    // Mixr: a saved audio setup. A null device id means "don't change" (output, microphone)
+    // or "follow the default output" (app routes). Names are kept for display while a device is unplugged.
+    public class AudioProfile
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string OutputDeviceId { get; set; }
+        public string OutputDeviceName { get; set; }
+        public string InputDeviceId { get; set; }
+        public string InputDeviceName { get; set; }
+        public AppRoute[] AppRoutes { get; set; } = new AppRoute[] { };
+    }
+
+    public class AppRoute
+    {
+        public string AppId { get; set; }
+        public string AppName { get; set; }
+        public string DeviceId { get; set; }
+        public string DeviceName { get; set; }
     }
 }

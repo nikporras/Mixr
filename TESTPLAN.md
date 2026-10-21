@@ -9,6 +9,7 @@ Manual tests to run before a release. Tick each box as it passes. Add tests here
 | Hide and rename devices | Passed 2026-10-21 |
 | Cycle hotkey | Passed 2026-10-21 (core tests), extra checks pending |
 | Auto switch on connect | Not tested yet |
+| Profiles | Not tested yet |
 
 ## Setup (before every test run)
 
@@ -60,6 +61,30 @@ Setup: with the headphones (or Quest Link) connected, Settings > Devices, tick *
 - [ ] The setting stays saved after unplugging the device
 - [ ] Cycle hotkey still works as before
 
+## 4. Profiles
+
+Setup: open two apps that play sound (e.g. Spotify and a browser video) so they show in the flyout. Have at least two playback devices and two microphones.
+
+- [ ] Settings > Profiles shows the description and a **Save current setup as a new profile** button
+- [ ] Set up "A": speakers default, mic 1 default, move Spotify to the headset (flyout > right click Spotify > move). Click **Save current setup…**: "Profile 1" appears listing Default output: speakers, Default microphone: mic 1, Spotify: headset, the browser: follows the default output
+- [ ] Rename it to "Work", click out of the box: the name sticks
+- [ ] Set up "B": headset default, mic 2 default, Spotify back to the default device. Save it, rename it "Gaming"
+- [ ] Tray right click > **Profiles** lists Work and Gaming
+- [ ] Click Work: the popup shows "Profile: Work", the default output and mic change (check Windows Sound settings), Spotify plays on the headset
+- [ ] Click Gaming: the default output and mic switch, Spotify follows the default again
+- [ ] Windows Sound control panel (tray right click > Windows legacy > Playback/Recording devices): the profile's output and mic are both "Default Device" and "Default Communication Device"
+- [ ] A voice app (Discord) set to "Default" input picks up the new mic
+- [ ] The **Apply** button on the Profiles page does the same as the tray menu
+- [ ] Remove a line with its × button (e.g. the mic): it's gone, and applying no longer changes the mic
+- [ ] Remove every line: "This profile doesn't change anything." shows, and applying changes nothing
+- [ ] **Replace with current setup** refreshes the lines to match what's set now
+- [ ] Close Spotify, apply a profile that routes it: nothing breaks, the other parts still apply
+- [ ] Unplug a device a profile uses, apply it: that part is skipped, the rest still applies
+- [ ] **Delete** removes the profile from the page and the tray menu
+- [ ] With no profiles, the tray menu has no Profiles entry
+- [ ] Exit and restart Mixr: profiles, names and lines are kept
+- [ ] Cycle hotkey and auto switch still work as before
+
 ## If something fails
 
-Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect` or `StorageFactory Using`.
+Settings > About > open the diagnostic data and copy the lines starting with `DefaultDeviceCycler`, `DefaultDeviceSwitcher`, `AutoSwitchOnConnect`, `ProfileManager` or `StorageFactory Using`.

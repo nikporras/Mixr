@@ -219,6 +219,73 @@
                 </ItemsControl>
             </StackPanel>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MixrProfilesSettingsPageViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Style="{StaticResource BodyText}" Text="{x:Static resx:Resources.ProfilesSettingsDescriptionText}" />
+                <Button HorizontalAlignment="Left"
+                        Command="{Binding SaveCurrent}"
+                        Content="{x:Static resx:Resources.ProfileSaveCurrentText}" />
+                <ItemsControl Focusable="False" ItemsSource="{Binding Profiles}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,18,0,0" Orientation="Vertical">
+                                <TextBlock Style="{StaticResource BodySubText}"
+                                           Margin="12,0"
+                                           Text="{x:Static resx:Resources.ProfileNameText}" />
+                                <TextBox Width="320"
+                                         HorizontalAlignment="Left"
+                                         AutomationProperties.Name="{x:Static resx:Resources.ProfileNameText}"
+                                         FontWeight="SemiBold"
+                                         Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                <ItemsControl Margin="0,6,0,0"
+                                              Focusable="False"
+                                              ItemsSource="{Binding Lines}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock VerticalAlignment="Center"
+                                                           Style="{StaticResource BodyText}"
+                                                           Text="{Binding Text}" />
+                                                <Button VerticalAlignment="Center"
+                                                        AutomationProperties.Name="{x:Static resx:Resources.ProfileRemoveLineText}"
+                                                        Command="{Binding Remove}"
+                                                        Style="{StaticResource ToolbarButtonStyle}"
+                                                        ToolTipService.ToolTip="{x:Static resx:Resources.ProfileRemoveLineText}">
+                                                    <TextBlock FontSize="12"
+                                                               Style="{StaticResource GlyphTextBlockStyle}"
+                                                               Text="&#xE106;" />
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{x:Static resx:Resources.ProfileEmptyText}">
+                                    <TextBlock.Style>
+                                        <Style BasedOn="{StaticResource BodySubText}" TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsEmpty}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="0,0,8,0"
+                                            Command="{Binding Apply}"
+                                            Content="{x:Static resx:Resources.ProfileApplyText}" />
+                                    <Button Margin="0,0,8,0"
+                                            Command="{Binding ReplaceWithCurrent}"
+                                            Content="{x:Static resx:Resources.ProfileReplaceText}" />
+                                    <Button Command="{Binding Delete}" Content="{x:Static resx:Resources.ProfileDeleteText}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:MixrMouseSettingsPageViewModel}">
             <StackPanel Orientation="Vertical">
                 <CheckBox HorizontalAlignment="Left"

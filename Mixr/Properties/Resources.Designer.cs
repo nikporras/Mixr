@@ -1771,5 +1771,158 @@ namespace Mixr.Properties {
                 return ResourceManager.GetString("WindowsLegacyMenuText", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        public static string ProfilesSettingsPageText {
+            get {
+                return ResourceManager.GetString("ProfilesSettingsPageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A profile sets the default output, the default microphone and where each app plays, all in one go. Set things up the way you want, then save it here. Apply a profile from the tray icon&apos;s right-click menu (Profiles) or with its Apply button. Apps are only moved if they are running when the profile is applied..
+        /// </summary>
+        public static string ProfilesSettingsDescriptionText {
+            get {
+                return ResourceManager.GetString("ProfilesSettingsDescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save current setup as a new profile.
+        /// </summary>
+        public static string ProfileSaveCurrentText {
+            get {
+                return ResourceManager.GetString("ProfileSaveCurrentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string ProfileNameText {
+            get {
+                return ResourceManager.GetString("ProfileNameText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default output: {Name}.
+        /// </summary>
+        public static string ProfileOutputFormatText {
+            get {
+                return ResourceManager.GetString("ProfileOutputFormatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default microphone: {Name}.
+        /// </summary>
+        public static string ProfileInputFormatText {
+            get {
+                return ResourceManager.GetString("ProfileInputFormatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {App}: {Device}.
+        /// </summary>
+        public static string ProfileAppRouteFormatText {
+            get {
+                return ResourceManager.GetString("ProfileAppRouteFormatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to follows the default output.
+        /// </summary>
+        public static string ProfileFollowDefaultText {
+            get {
+                return ResourceManager.GetString("ProfileFollowDefaultText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (unknown device).
+        /// </summary>
+        public static string ProfileUnknownDeviceText {
+            get {
+                return ResourceManager.GetString("ProfileUnknownDeviceText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This profile doesn&apos;t change anything..
+        /// </summary>
+        public static string ProfileEmptyText {
+            get {
+                return ResourceManager.GetString("ProfileEmptyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply.
+        /// </summary>
+        public static string ProfileApplyText {
+            get {
+                return ResourceManager.GetString("ProfileApplyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace with current setup.
+        /// </summary>
+        public static string ProfileReplaceText {
+            get {
+                return ResourceManager.GetString("ProfileReplaceText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string ProfileDeleteText {
+            get {
+                return ResourceManager.GetString("ProfileDeleteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from profile.
+        /// </summary>
+        public static string ProfileRemoveLineText {
+            get {
+                return ResourceManager.GetString("ProfileRemoveLineText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile {Number}.
+        /// </summary>
+        public static string ProfileDefaultNameFormatText {
+            get {
+                return ResourceManager.GetString("ProfileDefaultNameFormatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profiles.
+        /// </summary>
+        public static string ProfilesMenuText {
+            get {
+                return ResourceManager.GetString("ProfilesMenuText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile: {Name}.
+        /// </summary>
+        public static string ProfileAppliedFormatText {
+            get {
+                return ResourceManager.GetString("ProfileAppliedFormatText", resourceCulture);
+            }
+        }
     }
 }

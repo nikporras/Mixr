@@ -11,10 +11,17 @@ namespace Mixr.UI.Helpers
     // usual default-changed notification.
     public class DefaultDeviceSwitcher
     {
+        // The cycle hotkey and auto switch set eMultimedia only, as the rest of Mixr does.
+        public static readonly ERole[] DefaultRoles = { ERole.eMultimedia };
+
+        // Profiles set "Default device" and "Default communications device" together.
+        public static readonly ERole[] AllRoles = { ERole.eConsole, ERole.eMultimedia, ERole.eCommunications };
+
         private readonly object _lock = new object();
 
         // Guarded by _lock.
         private string _pendingId;
+        private ERole[] _pendingRoles;
         private bool _isApplying;
 
         public bool IsApplying
@@ -28,11 +35,14 @@ namespace Mixr.UI.Helpers
             }
         }
 
-        public void RequestDefault(string deviceId)
+        public void RequestDefault(string deviceId) => RequestDefault(deviceId, DefaultRoles);
+
+        public void RequestDefault(string deviceId, ERole[] roles)
         {
             lock (_lock)
             {
                 _pendingId = deviceId;
+                _pendingRoles = roles;
                 if (_isApplying)
                 {
                     return;
@@ -49,10 +59,13 @@ namespace Mixr.UI.Helpers
             while (true)
             {
                 string deviceId;
+                ERole[] roles;
                 lock (_lock)
                 {
                     deviceId = _pendingId;
+                    roles = _pendingRoles;
                     _pendingId = null;
+                    _pendingRoles = null;
                     if (deviceId == null)
                     {
                         _isApplying = false;
@@ -62,12 +75,15 @@ namespace Mixr.UI.Helpers
 
                 try
                 {
-                    Trace.WriteLine($"DefaultDeviceSwitcher ApplyPendingDefault {deviceId}");
+                    Trace.WriteLine($"DefaultDeviceSwitcher ApplyPendingDefault {deviceId} ({string.Join(",", roles)})");
                     if (policyConfig == null)
                     {
                         policyConfig = new AutoPolicyConfigClientWin7();
                     }
-                    policyConfig.SetDefaultEndpoint(deviceId, ERole.eMultimedia);
+                    foreach (var role in roles)
+                    {
+                        policyConfig.SetDefaultEndpoint(deviceId, role);
+                    }
                 }
                 catch (Exception ex)
                 {

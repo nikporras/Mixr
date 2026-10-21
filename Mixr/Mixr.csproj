@@ -334,6 +334,8 @@
     <Compile Include="UI\Helpers\AutoSwitchOnConnect.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceCycler.cs" />
     <Compile Include="UI\Helpers\DefaultDeviceSwitcher.cs" />
+    <Compile Include="UI\Helpers\ProfileManager.cs" />
+    <Compile Include="UI\ViewModels\MixrProfilesSettingsPageViewModel.cs" />
     <Compile Include="UI\Views\DeviceSwitchPopup.xaml.cs">
       <DependentUpon>DeviceSwitchPopup.xaml</DependentUpon>
     </Compile>

@@ -41,6 +41,7 @@ namespace Mixr
         private DefaultDeviceSwitcher _defaultDeviceSwitcher;
         private DefaultDeviceCycler _deviceCycler;
         private AutoSwitchOnConnect _autoSwitchOnConnect;
+        private ProfileManager _profileManager;
         private DeviceSwitchPopup _deviceSwitchPopup;
         private ErrorReporter _errorReporter;
 
@@ -115,6 +116,14 @@ namespace Mixr
             _deviceCycler = new DefaultDeviceCycler(CollectionViewModel, Settings, _defaultDeviceSwitcher);
             _autoSwitchOnConnect = new AutoSwitchOnConnect(CollectionViewModel, Settings, _defaultDeviceSwitcher);
             _autoSwitchOnConnect.Switched += ShowDeviceSwitchPopup;
+
+            // Mixr: profiles also set the default microphone, which needs its own switcher so the two don't coalesce.
+            _profileManager = new ProfileManager(
+                CollectionViewModel,
+                WindowsAudioFactory.Create(AudioDeviceKind.Recording),
+                _defaultDeviceSwitcher,
+                new DefaultDeviceSwitcher());
+            _profileManager.Applied += profile => ShowSwitchPopup(Mixr.Properties.Resources.ProfileAppliedFormatText.Replace("{Name}", profile.Name));
 
             Settings.FlyoutHotkeyTyped += () => _flyoutViewModel.OpenFlyout(InputType.Keyboard);
             Settings.MixerHotkeyTyped += () => _mixerWindow.OpenOrClose();
@@ -210,6 +219,22 @@ namespace Mixr
                 });
             }
 
+            // Mixr: one click applies a saved profile.
+            var profiles = Settings.Profiles;
+            if (profiles.Any())
+            {
+                ret.Add(new ContextMenuSeparator());
+                ret.Add(new ContextMenuItem
+                {
+                    DisplayName = Mixr.Properties.Resources.ProfilesMenuText,
+                    Children = profiles.Select(profile => new ContextMenuItem
+                    {
+                        DisplayName = profile.Name,
+                        Command = new RelayCommand(() => _profileManager.Apply(profile)),
+                    }).ToList(),
+                });
+            }
+
             ret.AddRange(new List<ContextMenuItem>
                 {
                     new ContextMenuSeparator(),
@@ -258,6 +283,7 @@ namespace Mixr
                 new SettingsPageViewModel[]
                     {
                         new MixrDevicesSettingsPageViewModel(Settings, CollectionViewModel),
+                        new MixrProfilesSettingsPageViewModel(Settings, _profileManager),
                         new MixrShortcutsPageViewModel(Settings),
                         new MixrMouseSettingsPageViewModel(Settings),
                         new MixrCommunitySettingsPageViewModel(Settings),
@@ -309,7 +335,9 @@ namespace Mixr
             }
         }
 
-        private void ShowDeviceSwitchPopup(DeviceViewModel device)
+        private void ShowDeviceSwitchPopup(DeviceViewModel device) => ShowSwitchPopup(device.DisplayName);
+
+        private void ShowSwitchPopup(string text)
         {
             try
             {
@@ -317,11 +345,11 @@ namespace Mixr
                 {
                     _deviceSwitchPopup = new DeviceSwitchPopup();
                 }
-                _deviceSwitchPopup.ShowDeviceName(device.DisplayName);
+                _deviceSwitchPopup.ShowDeviceName(text);
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"App ShowDeviceSwitchPopup Failed: {ex}");
+                Trace.WriteLine($"App ShowSwitchPopup Failed: {ex}");
                 ErrorReporter.LogWarning(ex);
             }
         }
